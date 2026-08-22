@@ -280,61 +280,128 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Detail overlay ----------
-  const detail = $('libDetail');
-  const openDetail = (kind, id) => {
-    const source = kind === 'sequence' ? sequences : playlists;
-    const item = source.find(i => String(i.id) === String(id));
-    if (!item) return;
-    const tracks = resolveTracks(item);
+const detail = $('libDetail');
+let currentDetail = null; // { kind, id } for the open overlay, used by rename/remove-track
 
-    const isSequence = kind === 'sequence';
-    const MAX_DIST = Math.sqrt(3);
-    const transitionsById = isSequence
-      ? new Map((item.transitions || []).map(t => [`${t.fromId}->${t.toId}`, t]))
-      : null;
+// Recomputes per-transition distance + overall smoothness for a sequence
+// after a track is removed, without re-running the full nearest-neighbor +
+// 2-opt solve — the remaining tracks just keep their existing relative
+// order and the consecutive gaps are recalculated.
+const MAX_DIST = Math.sqrt(3);
+const recomputeSequenceMetrics = (orderedTracks) => {
+  if (orderedTracks.length < 2) return { transitions: [], smoothness: orderedTracks.length ? 100 : 0 };
+  const bpms = orderedTracks.map(t => t.bpm);
+  const minBpm = Math.min(...bpms), maxBpm = Math.max(...bpms);
+  const bpmRange = (maxBpm - minBpm) || 1;
+  const nodes = orderedTracks.map(t => ({
+    ...t, _nt: (t.bpm - minBpm) / bpmRange, _ne: t.energy / 10, _nm: t.mood / 10,
+  }));
+  const dist = (a, b) => Math.sqrt((a._nt - b._nt) ** 2 + (a._ne - b._ne) ** 2 + (a._nm - b._nm) ** 2);
+  const transitions = [];
+  for (let i = 0; i < nodes.length - 1; i++) {
+    const a = nodes[i], b = nodes[i + 1];
+    transitions.push({
+      fromId: a.id, toId: b.id, distance: dist(a, b),
+      deltaBpm: Math.abs(b.bpm - a.bpm), deltaEnergy: Math.abs(b.energy - a.energy), deltaMood: Math.abs(b.mood - a.mood),
+    });
+  }
+  const total = transitions.reduce((s, t) => s + t.distance, 0);
+  const smoothness = Math.max(0, Math.min(100, Math.round(100 * (1 - (total / transitions.length) / MAX_DIST))));
+  return { transitions, smoothness };
+};
 
-    $('detailKind').textContent = isSequence ? 'Sequence' : 'Playlist';
-    $('detailName').textContent = item.name;
-    $('detailMeta').textContent = isSequence
-      ? `${item.tempo || '—'} bpm start · ${tracks.length} track${tracks.length === 1 ? '' : 's'}${typeof item.smoothness === 'number' ? ` · ${item.smoothness}% smooth` : ''}`
-      : `${tracks.length} track${tracks.length === 1 ? '' : 's'}`;
-    $('detailArt').style.background = gradientFor(item.name + item.id);
-    $('detailArt').textContent = isSequence ? '〽' : '♪';
+const openDetail = (kind, id) => {
+  currentDetail = { kind, id };
+  const source = kind === 'sequence' ? sequences : playlists;
+  const item = source.find(i => String(i.id) === String(id));
+  if (!item) return;
+  const tracks = resolveTracks(item);
 
-    $('detailList').innerHTML = tracks.length
-      ? tracks.map((t, i) => {
-          const prev = tracks[i - 1];
-          const trans = isSequence && prev ? transitionsById.get(`${prev.id}->${t.id}`) : null;
-          const jumpPct = trans ? Math.round((1 - trans.distance / MAX_DIST) * 100) : null;
-          const jumpNote = isSequence
-            ? (trans
-                ? `<span class="lib-track-meta" style="font-size:11px;color:${jumpPct < 55 ? 'var(--ember)' : 'var(--current)'}">${jumpPct}% smooth transition</span>`
-                : `<span class="lib-track-meta" style="font-size:11px;color:var(--signal)">Start</span>`)
-            : '';
-          return `
-        <div class="lib-track-row" style="grid-template-columns:34px 1fr 90px 84px" data-id="${escapeHtml(t.id)}">
-          <span class="lib-track-num">${isSequence ? i + 1 : '▸'}</span>
-          <div class="lib-track-title-cell">
-            ${trackCover(t, 'lib-track-art')}
-            <div>
-              <div class="lib-track-title">${escapeHtml(t.title)}</div>
-              <div class="lib-track-artist">${escapeHtml(t.artist || 'Unknown artist')}${jumpNote ? ' · ' : ''}${jumpNote}</div>
-            </div>
+  const isSequence = kind === 'sequence';
+  const transitionsById = isSequence
+    ? new Map((item.transitions || []).map(t => [`${t.fromId}->${t.toId}`, t]))
+    : null;
+
+  $('detailKind').textContent = isSequence ? 'Sequence' : 'Playlist';
+  $('detailName').textContent = item.name;
+  $('detailMeta').textContent = isSequence
+    ? `${item.tempo || '—'} bpm start · ${tracks.length} track${tracks.length === 1 ? '' : 's'}${typeof item.smoothness === 'number' ? ` · ${item.smoothness}% smooth` : ''}`
+    : `${tracks.length} track${tracks.length === 1 ? '' : 's'}`;
+  $('detailArt').style.background = gradientFor(item.name + item.id);
+  $('detailArt').textContent = isSequence ? '〽' : '♪';
+
+  $('detailList').innerHTML = tracks.length
+    ? tracks.map((t, i) => {
+        const prev = tracks[i - 1];
+        const trans = isSequence && prev ? transitionsById.get(`${prev.id}->${t.id}`) : null;
+        const jumpPct = trans ? Math.round((1 - trans.distance / MAX_DIST) * 100) : null;
+        const jumpNote = isSequence
+          ? (trans
+              ? `<span class="lib-track-meta" style="font-size:11px;color:${jumpPct < 55 ? 'var(--ember)' : 'var(--current)'}">${jumpPct}% smooth transition</span>`
+              : `<span class="lib-track-meta" style="font-size:11px;color:var(--signal)">Start</span>`)
+          : '';
+        return `
+      <div class="lib-track-row" style="grid-template-columns:34px 1fr 90px 110px" data-id="${escapeHtml(t.id)}">
+        <span class="lib-track-num">${isSequence ? i + 1 : '▸'}</span>
+        <div class="lib-track-title-cell">
+          ${trackCover(t, 'lib-track-art')}
+          <div>
+            <div class="lib-track-title">${escapeHtml(t.title)}</div>
+            <div class="lib-track-artist">${escapeHtml(t.artist || 'Unknown artist')}${jumpNote ? ' · ' : ''}${jumpNote}</div>
           </div>
-          <span class="lib-track-meta">${t.bpm ? t.bpm + ' bpm' : '—'}</span>
-          <div class="lib-track-actions">
-            <button class="lib-mini-btn" data-play-track="${escapeHtml(t.id)}" title="Play">▶</button>
-          </div>
-        </div>`;
-        }).join('')
-      : `<p class="form-sub" style="padding:10px 4px">No tracks in this ${kind} yet.</p>`;
+        </div>
+        <span class="lib-track-meta">${t.bpm ? t.bpm + ' bpm' : '—'}</span>
+        <div class="lib-track-actions">
+          <button class="lib-mini-btn" data-play-track="${escapeHtml(t.id)}" title="Play">▶</button>
+          <button class="lib-mini-btn" data-remove-from-collection="${escapeHtml(t.id)}" title="Remove from this ${kind}">×</button>
+        </div>
+      </div>`;
+      }).join('')
+    : `<p class="form-sub" style="padding:10px 4px">No tracks in this ${kind} yet.</p>`;
 
-    detail.hidden = false;
-  };
-  $('detailClose').addEventListener('click', () => { detail.hidden = true; });
-  detail.addEventListener('click', (e) => { if (e.target === detail) detail.hidden = true; });
+  detail.hidden = false;
+};
+$('detailClose').addEventListener('click', () => { detail.hidden = true; currentDetail = null; });
+detail.addEventListener('click', (e) => { if (e.target === detail) { detail.hidden = true; currentDetail = null; } });
 
-  // ---------- Delegated open/play/remove handling ----------
+// ---------- Rename & remove-track (detail overlay) ----------
+$('detailRename').addEventListener('click', () => {
+  if (!currentDetail) return;
+  const source = currentDetail.kind === 'sequence' ? sequences : playlists;
+  const item = source.find(i => String(i.id) === String(currentDetail.id));
+  if (!item) return;
+  const next = (prompt('Rename to:', item.name) || '').trim();
+  if (!next || next === item.name) return;
+  item.name = next;
+  save(currentDetail.kind === 'sequence' ? 'sequences' : 'playlists', source);
+  renderAll();
+  openDetail(currentDetail.kind, currentDetail.id);
+});
+
+detail.addEventListener('click', (e) => {
+  const removeBtn = e.target.closest('[data-remove-from-collection]');
+  if (!removeBtn || !currentDetail) return;
+  const trackId = removeBtn.dataset.removeFromCollection;
+  const isSequence = currentDetail.kind === 'sequence';
+  const source = isSequence ? sequences : playlists;
+  const item = source.find(i => String(i.id) === String(currentDetail.id));
+  if (!item) return;
+
+  item.trackIds = (item.trackIds || []).filter(id => String(id) !== String(trackId));
+
+  if (isSequence) {
+    const remaining = resolveTracks(item);
+    const { transitions, smoothness } = recomputeSequenceMetrics(remaining);
+    item.transitions = transitions;
+    item.smoothness = smoothness;
+  }
+
+  save(isSequence ? 'sequences' : 'playlists', source);
+  renderAll();
+  openDetail(currentDetail.kind, currentDetail.id);
+});
+
+  
   document.addEventListener('click', (e) => {
     const opener = e.target.closest('[data-open]');
     if (opener) {
@@ -360,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ---------- Playback ----------
+ 
   const audio = $('libAudio');
   let playingId = null;
 
@@ -378,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!t) return;
     if (playingId === id && !audio.paused) { audio.pause(); playingId = null; setPlayingUI(null); return; }
     if (!t.previewUrl) {
-      // No audio source (manually tagged track) — just flash the UI state.
+      
       playingId = id; setPlayingUI(id);
       setTimeout(() => { if (playingId === id) { playingId = null; setPlayingUI(null); } }, 900);
       return;
@@ -405,6 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ---------- Init ----------
+ 
   renderAll();
 });

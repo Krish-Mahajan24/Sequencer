@@ -1765,7 +1765,18 @@ body::before {
 
 .row-remove:hover { color: var(--ember); }
 
-/* ---------- Empty state ---------- */
+.row-edit {
+  background: none;
+  border: none;
+  color: var(--mist-dim);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 4px;
+}
+.row-edit:hover { color: var(--current); }
+
+
 
 .empty-state {
   border: 1px dashed var(--line);
@@ -1898,7 +1909,7 @@ body::before {
   margin-top: 28px;
 }
 
-/* ---------- Reveal on scroll ---------- */
+
 
 .reveal {
   opacity: 0;
