@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sequencer — mood-transition playlist ordering</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="wave-bg" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      Sequencer
+      <span class="nav-viz" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </span>
+    </a>
+
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="library.html">Library</a>
+      <a href="sequence.html">Sequence</a>
+    </div>
+
+    <div class="nav-right">
+      
+      <a href="auth.html" class="btn btn-secondary btn-sm" >Sign in</a><a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap hero">
+  <div class="hero-copy reveal">
+    
+    <h1>Order your playlist<br>by <em>feel</em>, not alphabet.</h1>
+    <p class="hero-sub">Tag each track's tempo, energy, and mood. Sequencer maps the distance between every pair of songs and threads the path with the fewest jarring jumps — no shuffle, no manual dragging.</p>
+    <div class="hero-actions">
+      <a href="sequence.html" class="btn btn-primary">Start building <span class="arrow">→</span></a>
+      <a href="#how-it-works" class="btn btn-secondary">How it works</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">3</span>
+        <span class="hero-stat-label">axes mapped<br>tempo · energy · mood</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">0</span>
+        <span class="hero-stat-label">manual drags<br>needed to reorder</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">1</span>
+        <span class="hero-stat-label">smoothest path<br>found per playlist</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="player-card reveal-scale" id="playerCard">
+    <div class="player-card-label">
+      <span>Trending in Sequencer</span>
+      <span class="player-card-link">Browse Library →</span>
+    </div>
+
+    <div class="player-list">
+      <div class="player-row playing">
+        <div class="player-thumb" style="background:linear-gradient(135deg,#FF3D81,#3B1428)">
+          <button class="player-play" aria-label="Toggle Low Tide">
+            <span class="player-play-icon">▶</span>
+            <span class="player-eq"><span></span><span></span><span></span></span>
+          </button>
+        </div>
+        <div class="player-meta">
+          <span class="player-title">Low Tide</span>
+          <span class="player-artist">Nightbound · 68 bpm · chill</span>
+        </div>
+        <span class="player-duration">2:14</span>
+      </div>
+
+      <div class="player-row">
+        <div class="player-thumb" style="background:linear-gradient(135deg,#FF7FAE,#401A2E)">
+          <button class="player-play" aria-label="Toggle Slow Static">
+            <span class="player-play-icon">▶</span>
+            <span class="player-eq"><span></span><span></span><span></span></span>
+          </button>
+        </div>
+        <div class="player-meta">
+          <span class="player-title">Slow Static</span>
+          <span class="player-artist">Nightbound · 78 bpm · mellow</span>
+        </div>
+        <span class="player-duration">3:02</span>
+      </div>
+
+      <div class="player-row">
+        <div class="player-thumb" style="background:linear-gradient(135deg,#FF8FCB,#401A38)">
+          <button class="player-play" aria-label="Toggle Half Light">
+            <span class="player-play-icon">▶</span>
+            <span class="player-eq"><span></span><span></span><span></span></span>
+          </button>
+        </div>
+        <div class="player-meta">
+          <span class="player-title">Half Light</span>
+          <span class="player-artist">Reverie · 96 bpm · groove</span>
+        </div>
+        <span class="player-duration">2:41</span>
+      </div>
+
+      <div class="player-row">
+        <div class="player-thumb" style="background:linear-gradient(135deg,#E8768A,#4A1A3A)">
+          <button class="player-play" aria-label="Toggle Wire and Wave">
+            <span class="player-play-icon">▶</span>
+            <span class="player-eq"><span></span><span></span><span></span></span>
+          </button>
+        </div>
+        <div class="player-meta">
+          <span class="player-title">Wire &amp; Wave</span>
+          <span class="player-artist">Reverie · 112 bpm · lift</span>
+        </div>
+        <span class="player-duration">3:18</span>
+      </div>
+
+      <div class="player-row">
+        <div class="player-thumb" style="background:linear-gradient(135deg,#FF4757,#451820)">
+          <button class="player-play" aria-label="Toggle Redline">
+            <span class="player-play-icon">▶</span>
+            <span class="player-eq"><span></span><span></span><span></span></span>
+          </button>
+        </div>
+        <div class="player-meta">
+          <span class="player-title">Redline</span>
+          <span class="player-artist">Kilo Sun · 128 bpm · peak</span>
+        </div>
+        <span class="player-duration">2:52</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="section band-pink" id="how-it-works">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">How it works</div>
+      <h2 class="word-reveal">Three steps, one smoother playlist.</h2>
+      <p>No shuffle, no manual dragging — the sequencer treats each track as a point in tempo/mood/energy space and threads the shortest path through all of them.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M4 20L9 12L14 22L19 8L24 18L28 11" stroke="var(--current)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-index">01 — Tag</div>
+        <h3>Tag your tracks</h3>
+        <p>Add each song's title, tempo, energy level, and mood. Takes a few seconds per track.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-icon">
+          <svg viewBox="0 0 32 32" fill="none"><circle cx="7" cy="24" r="3" stroke="var(--signal)" stroke-width="2"/><circle cx="16" cy="9" r="3" stroke="var(--signal)" stroke-width="2"/><circle cx="25" cy="24" r="3" stroke="var(--signal)" stroke-width="2"/><path d="M9.5 22L14 11.5M18 11.5L22.5 22M10 25H22" stroke="var(--signal)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-index">02 — Map</div>
+        <h3>Map the transitions</h3>
+        <p>Every song becomes a node. The distance between any two tracks is measured across all three attributes at once.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M5 26C5 26 9 8 16 8C23 8 27 26 27 26" stroke="var(--ember)" stroke-width="2" stroke-linecap="round"/><path d="M11 26L16 15L21 26" stroke="var(--ember)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="step-index">03 — Play</div>
+        <h3>Play the smoothest route</h3>
+        <p>Sequencer walks the nearest unplayed track each time, then scores the whole playlist on how smooth the ride is.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section sound-section band-black">
+  <div class="wrap">
+    
+    <h2 class="sound-heading word-reveal reveal">Every set<br> has an architecture.</h2>
+
+    <div class="sound-layout">
+      <div class="sound-gallery-wrap">
+        <div class="sound-gallery">
+          <figure class="sound-photo photo-dj reveal-left">
+            <img src="../assets/img/dj-turntable.jpg" alt="DJ cueing a track on a turntable, mid-transition">
+          </figure>
+          <figure class="sound-photo photo-dance reveal">
+            <img src="../assets/img/dancer.jpg" alt="Dancer moving through a peak-energy moment on the floor">
+          </figure>
+          <figure class="sound-photo photo-headphones reveal-right">
+            <img src="../assets/img/headphones.jpg" alt="Close-up on headphones, eyes closed, deep inside a track">
+          </figure>
+        </div>
+
+        <a href="sequence.html" class="sound-cta reveal">Learn more <span class="arrow">→</span></a>
+      </div>
+
+      <div class="sound-copy reveal">
+        <p>Every good session moves like a story — a slow open, a rising middle, a peak that lands right on cue. Sequencer reads the tempo, energy, and mood behind every track you tag, then plots the smoothest possible route between them.</p>
+        <p>No more guessing what comes next. No more shuffle. Just the shortest path from chill to peak, built one transition at a time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section formula-section band-pink">
+  <div class="wrap">
+    <div class="formula-grid">
+      <div class="formula-copy reveal-left">
+        <div class="eyebrow">Under the hood</div>
+        <h2 class="word-reveal">Every pair of songs gets a distance.</h2>
+        <p class="hero-sub" style="margin-bottom:24px;">Tempo, energy, and mood are each normalized to a 0–1 scale, then treated as coordinates. The gap between any two tracks is just the straight-line distance between their points — closer points, smoother transitions.</p>
+        <ul class="formula-list">
+          <li><span class="formula-key">tempo</span>weighted 1×, normalized against your library's full BPM range</li>
+          <li><span class="formula-key">energy</span>weighted 1×, self-tagged from low to high on a 0–10 scale</li>
+          <li><span class="formula-key">mood</span>weighted 1×, mapped from chill to peak on the same scale</li>
+        </ul>
+      </div>
+
+      <div class="formula-visual reveal-right">
+        <div class="formula-card">
+          <div class="formula-card-label">distance(a, b)</div>
+          <div class="formula-eq">
+            √<span class="formula-paren">(</span>Δtempo<span class="formula-sup">2</span> + Δenergy<span class="formula-sup">2</span> + Δmood<span class="formula-sup">2</span><span class="formula-paren">)</span>
+          </div>
+          <div class="formula-axes">
+            <div class="formula-axis">
+              <span class="formula-axis-label">tempo</span>
+              <div class="formula-axis-track"><div class="formula-axis-fill" style="--w:38%; background:var(--current)"></div></div>
+            </div>
+            <div class="formula-axis">
+              <span class="formula-axis-label">energy</span>
+              <div class="formula-axis-track"><div class="formula-axis-fill" style="--w:64%; background:var(--signal)"></div></div>
+            </div>
+            <div class="formula-axis">
+              <span class="formula-axis-label">mood</span>
+              <div class="formula-axis-track"><div class="formula-axis-fill" style="--w:52%; background:var(--ember)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section showcase-section band-black">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">See it in action</div>
+      <h2 class="word-reveal">Built for real playlists, not toy demos.</h2>
+      <p>Same engine, different use — from a 20-track DJ set to a lo-fi study queue, Sequencer finds the smoothest route through whatever you throw at it.</p>
+    </div>
+
+    <div class="showcase-grid reveal">
+      <div class="showcase-media reveal-scale">
+        <div class="showcase-thumb">
+          <button class="showcase-play" aria-label="Play the walkthrough">
+            <span class="showcase-play-icon">▶</span>
+          </button>
+          <span class="showcase-time">1:42</span>
+        </div>
+        <span class="showcase-caption">Full sequencing walkthrough — tag, map, play</span>
+      </div>
+
+      <div class="showcase-list">
+        <a href="#" class="showcase-item is-active">
+          <span class="showcase-item-label">Live demo</span>
+          <span class="showcase-item-title">Watch a 20-track library get sequenced end to end</span>
+        </a>
+        <a href="sequence.html" class="showcase-item">
+          <span class="showcase-item-label">DJ sets</span>
+          <span class="showcase-item-title">Keep the floor moving with zero jarring drops</span>
+        </a>
+        <a href="sequence.html" class="showcase-item">
+          <span class="showcase-item-label">Study &amp; focus</span>
+          <span class="showcase-item-title">Ease from ambient into lo-fi without a jolt</span>
+        </a>
+        <a href="sequence.html" class="showcase-item">
+          <span class="showcase-item-label">Road trips</span>
+          <span class="showcase-item-title">Long drives that build and settle in sync with the road</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tools-bg" aria-hidden="true"></div>
+  <div class="wrap tools-wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Smarter workflow</div>
+      <h2 class="word-reveal">Smarter tags. Faster playlists.</h2>
+      <p>Every feature exists to make the sequencing engine work with less input from you.</p>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card reveal">
+        <div class="tool-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M6 26L14 18M18 14L26 6" stroke="var(--current)" stroke-width="2" stroke-linecap="round"/><path d="M22 4L23.2 6.8L26 8L23.2 9.2L22 12L20.8 9.2L18 8L20.8 6.8L22 4Z" fill="var(--current)"/><path d="M9 21L9.9 23.1L12 24L9.9 24.9L9 27L8.1 24.9L6 24L8.1 23.1L9 21Z" fill="var(--current)"/></svg>
+        </div>
+        <h3>Auto-tag from a title</h3>
+        <p>Type a track name and Sequencer estimates tempo, energy, and mood — so you're not tagging blind.</p>
+      </div>
+
+      <div class="tool-card reveal">
+        <div class="tool-icon">
+          <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="10" stroke="var(--signal)" stroke-width="2"/><circle cx="16" cy="16" r="5" stroke="var(--signal)" stroke-width="2"/><circle cx="16" cy="16" r="1.4" fill="var(--signal)"/></svg>
+        </div>
+        <h3>Live distance preview</h3>
+        <p>Hover any two tracks to see their exact distance score before you commit to an order.</p>
+      </div>
+
+      <div class="tool-card reveal">
+        <div class="tool-icon">
+          <svg viewBox="0 0 32 32" fill="none"><circle cx="9" cy="10" r="2" fill="var(--ember)"/><circle cx="9" cy="16" r="2" fill="var(--ember)"/><circle cx="9" cy="22" r="2" fill="var(--ember)"/><path d="M16 10H27M16 16H23M16 22H27" stroke="var(--ember)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Manual override</h3>
+        <p>Drag any track out of sequence and Sequencer quietly re-routes everything around your move.</p>
+      </div>
+
+      <div class="tool-card reveal">
+        <div class="tool-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M5 24C5 24 8 12 16 12C24 12 27 24 27 24" stroke="var(--current)" stroke-width="2" stroke-linecap="round"/><path d="M16 12V6" stroke="var(--current)" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="4.5" r="1.6" fill="var(--current)"/></svg>
+        </div>
+        <h3>Playlist scoring</h3>
+        <p>Every playlist gets a 0–100 smoothness score, so you know the sequence is actually working.</p>
+      </div>
+
+      <div class="tool-card reveal">
+        <div class="tool-icon">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M6 8H20M20 8L15 3M20 8L15 13" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 24H12M12 24L17 19M12 24L17 29" stroke="var(--signal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Export anywhere</h3>
+        <p>Send the finished order to Spotify, Apple Music, or a plain M3U file in one click.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner band-pink">
+  <div class="wrap cta-inner reveal">
+    <div>
+      <div class="eyebrow">Ready when you are</div>
+      <h2 class="word-reveal">Stop shuffling. Start sequencing.</h2>
+    </div>
+    <a href="sequence.html" class="btn btn-primary">Tag your first track <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<footer class="footer-main">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Sequencer</a>
+      <p>A mood-transition playlist ordering tool. Tag tempo, energy, and mood — get back the smoothest possible route through your library.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label">Navigate</span>
+      <a href="index.html">Home</a>
+      <a href="library.html">Library</a>
+      <a href="sequence.html">Sequence</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label">Project</span>
+      <span class="mono">Sequencer — phase 1</span>
+      <span class="mono">v0.1 · vanilla JS</span>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>Built to thread eight songs — or eight hundred.</span>
+    <button class="to-top" id="toTop" aria-label="Back to top">↑</button>
+  </div>
+</footer>
+
+<script src="../js/app.js"></script>
+<script src="../js/site-auth.js"></script>
+<script src="../js/user-store.js"></script>
+</body>
+</html>
