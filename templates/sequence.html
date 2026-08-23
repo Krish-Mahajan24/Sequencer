@@ -221,7 +221,7 @@ body::before {
   50% { transform: scaleY(1); }
 }
 
-/* ---------- Buttons ---------- */
+
 
 .btn {
   display: inline-flex;
@@ -279,7 +279,7 @@ body::before {
 .btn:disabled:hover { transform: none; }
 
 
-/* ---------- Hero ---------- */
+
 
 .hero {
   padding: 88px 0 56px;
@@ -375,10 +375,7 @@ body::before {
   will-change: transform;
 }
 
-/* Scoped, higher-specificity override so this card's reveal (opacity/scale/blur)
-   composes with its own tilt + scroll-parallax transform instead of the generic
-   .reveal-scale rule silently replacing it (same-specificity rules would otherwise
-   just pick whichever is declared last in the file). */
+
 .player-card.reveal-scale {
   opacity: var(--reveal-o, 0);
   filter: blur(var(--reveal-blur, 10px));
@@ -549,7 +546,7 @@ body::before {
   .player-eq span { animation: none; }
 }
 
-/* ---------- Section: how it works ---------- */
+
 
 .section {
   padding: 64px 0;
@@ -558,7 +555,7 @@ body::before {
 
 .showcase-section { border-top: none; padding-top: 0; padding-bottom: 0; overflow: hidden; }
 
-/* ---------- Alternating black / pink bands ---------- */
+
 
 .band-black {
   background: var(--ink);
@@ -646,7 +643,7 @@ body::before {
   font-size: 14px;
 }
 
-/* ---------- Showcase: media + use-case list ---------- */
+
 
 .showcase-section { padding-top: 64px; position: relative; }
 
@@ -762,7 +759,7 @@ body::before {
 
 .showcase-item:not(.is-active) .showcase-item-label { color: var(--mist-dim); }
 
-/* ---------- Tools grid, with wave-line background ---------- */
+
 
 .tools-wrap {
   position: relative;
@@ -953,7 +950,7 @@ body::before {
   padding: 3px 8px;
 }
 
-/* ---------- Formula section ---------- */
+
 
 .formula-grid {
   display: grid;
@@ -1061,7 +1058,6 @@ body::before {
 
 .formula-visual.in-view .formula-axis-fill { width: var(--w); }
 
-/* ---------- Roadmap section ---------- */
 
 .roadmap-track {
   position: relative;
@@ -1130,7 +1126,7 @@ body::before {
   font-size: 13.5px;
 }
 
-/* ---------- Sound / editorial gallery section ---------- */
+
 
 .sound-heading {
   font-size: 40px;
@@ -1249,7 +1245,7 @@ body::before {
   .photo-headphones { width: 34%; height: 46%; left: 66%; top: 40%; }
 }
 
-/* ---------- CTA banner ---------- */
+
 
 .cta-banner {
   border-top: none;
@@ -1272,7 +1268,7 @@ body::before {
 
 .cta-inner h2 { font-size: 26px; }
 
-/* ---------- Footer ---------- */
+
 
 .footer-main {
   border-top: 1px solid var(--line-soft);
@@ -1340,7 +1336,7 @@ body::before {
 
 .to-top:hover { border-color: var(--signal); transform: translateY(-2px); }
 
-/* ---------- Page header (library / sequence) ---------- */
+
 
 .page-head {
   padding: 56px 0 36px;
@@ -1365,7 +1361,7 @@ body::before {
   align-items: start;
 }
 
-/* ---------- Form ---------- */
+
 
 .form-card {
   background: var(--paper);
@@ -1469,7 +1465,7 @@ body::before {
 
 .form-card .btn { width: 100%; justify-content: center; margin-top: 6px; }
 
-/* ---------- Stats bar ---------- */
+
 
 .stats-bar {
   display: grid;
@@ -1516,7 +1512,7 @@ body::before {
   letter-spacing: 0.04em;
 }
 
-/* ---------- Scatter map (energy x mood) ---------- */
+
 
 .scatter-card {
   background: var(--paper);
@@ -1618,8 +1614,10 @@ body::before {
   stroke-linecap: round;
   opacity: 0.55;
   stroke-dasharray: 5 4;
+  vector-effect: non-scaling-stroke;
   animation: edgeDraw 0.5s var(--ease) backwards;
 }
+
 
 .scatter-edges .edge-arrow {
   fill: var(--current);
@@ -1863,7 +1861,6 @@ body::before {
   margin: 0 auto;
 }
 
-/* ---------- Sequence page ---------- */
 
 .score-panel {
   display: grid;
@@ -2518,7 +2515,7 @@ body::before {
         <span class="scatter-axis-label axis-bottom">low energy</span>
         <span class="scatter-axis-label axis-left">chill</span>
         <span class="scatter-axis-label axis-right">peak</span>
-        <svg id="scatterEdges" class="scatter-edges" preserveAspectRatio="none"></svg>
+       <svg id="scatterEdges" class="scatter-edges" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
         <div class="scatter-empty" id="scatterEmpty">Add a track to see it plotted here</div>
       </div>
     </div>
