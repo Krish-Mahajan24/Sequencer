@@ -1557,6 +1557,7 @@ body::before {
   pointer-events: none;
 }
 
+
 .scatter-edges .edge-line {
   fill: none;
   stroke: var(--current);
@@ -1564,6 +1565,7 @@ body::before {
   stroke-linecap: round;
   opacity: 0.55;
   stroke-dasharray: 5 4;
+  vector-effect: non-scaling-stroke;
   animation: edgeDraw 0.5s var(--ease) backwards;
 }
 
@@ -1629,7 +1631,6 @@ body::before {
   75% { transform: translateX(4px); }
 }
 
-/* ---------- Song list ---------- */
 
 .list-head {
   display: flex;
