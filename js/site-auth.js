@@ -47,8 +47,8 @@
           </div>
         </div>
         <div class="profile-menu-divider"></div>
-        <button type="button" class="profile-option disabled-option" data-coming="Profile">Profile</button>
-        <button type="button" class="profile-option disabled-option" data-coming="My Library">My Library</button>
+        <a href="profile.html" class="profile-option">Profile</a>
+        <a href="library.html" class="profile-option">My Library</a>
         <button type="button" class="profile-option disabled-option" data-coming="Settings">Settings</button>
         <button type="button" class="profile-option disabled-option" data-coming="Help &amp; support">Help &amp; support</button>
         <div class="profile-menu-divider"></div>

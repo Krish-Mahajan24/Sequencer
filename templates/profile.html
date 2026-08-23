@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Sequencer</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+<div class="wave-bg" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      Sequencer
+      <span class="nav-viz" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="library.html">Library</a>
+      <a href="sequence.html">Sequence</a>
+    </div>
+    <div class="nav-right">
+      <a href="sequence.html" class="btn btn-primary btn-sm nav-build-btn">Start building <span class="arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<main class="profile-page">
+  <div class="wrap">
+    <header class="profile-header">
+      <div>
+        <div class="eyebrow">Your account</div>
+        <h1>Profile &amp; account</h1>
+        <p>Manage your details, playlists, listening history and account security in one place.</p>
+      </div>
+      <a class="btn btn-secondary btn-sm" href="library.html">Open library →</a>
+    </header>
+
+    <section class="profile-identity card">
+      <div class="identity-avatar" id="profileAvatar">U</div>
+      <div class="identity-copy">
+        <span class="identity-kicker">Signed in as</span>
+        <h2 id="profileName">User</h2>
+        <p id="profileEmail">—</p>
+      </div>
+      <div class="identity-actions">
+        <a class="btn btn-secondary btn-sm" href="#security">Security</a>
+        <button class="btn btn-primary btn-sm" id="logoutProfile" type="button">Log out</button>
+      </div>
+    </section>
+
+    <section class="profile-stats" aria-label="Account overview">
+      <div class="stat-card"><span id="statTracks">0</span><small>Tracks</small></div>
+      <div class="stat-card"><span id="statPlaylists">0</span><small>Playlists</small></div>
+      <div class="stat-card"><span id="statHistory">0</span><small>History entries</small></div>
+      <div class="stat-card"><span id="statLiked">0</span><small>Liked songs</small></div>
+    </section>
+
+    <div class="profile-grid">
+      <section class="card profile-section">
+        <div class="section-title">
+          <div><span class="section-kicker">Account</span><h2>Personal details</h2></div>
+        </div>
+        <form id="detailsForm" class="details-form">
+          <label><span>First name</span><input id="firstName" autocomplete="given-name" required></label>
+          <label><span>Last name</span><input id="lastName" autocomplete="family-name" required></label>
+          <label class="full"><span>Email</span><input id="email" type="email" autocomplete="email" required></label>
+          <div class="form-actions full"><span class="form-message" id="detailsMessage"></span><button class="btn btn-primary" type="submit">Save changes</button></div>
+        </form>
+      </section>
+
+      <section class="card profile-section" id="security">
+        <div class="section-title">
+          <div><span class="section-kicker">Security</span><h2>Change password</h2></div>
+        </div>
+        <form id="passwordForm" class="details-form">
+          <label class="full"><span>Current password</span><input id="currentPassword" type="password" autocomplete="current-password" required minlength="6"></label>
+          <label><span>New password</span><input id="newPassword" type="password" autocomplete="new-password" required minlength="6"></label>
+          <label><span>Confirm new password</span><input id="confirmPassword" type="password" autocomplete="new-password" required minlength="6"></label>
+          <div class="form-actions full"><span class="form-message" id="passwordMessage"></span><button class="btn btn-primary" type="submit">Update password</button></div>
+        </form>
+      </section>
+
+      <section class="card profile-section profile-wide">
+        <div class="section-title">
+          <div><span class="section-kicker">Your music</span><h2>Playlists created</h2></div>
+          <a href="sequence.html" class="text-link">Create playlist →</a>
+        </div>
+        <div id="playlistList" class="playlist-list"></div>
+      </section>
+
+      <section class="card profile-section profile-wide">
+        <div class="section-title">
+          <div><span class="section-kicker">Recently played</span><h2>Song history</h2></div>
+          <button class="text-button danger-soft" id="clearHistory" type="button">Clear history</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <section class="card profile-section danger-zone profile-wide">
+        <div class="section-title">
+          <div><span class="section-kicker">Danger zone</span><h2>Delete account</h2></div>
+        </div>
+        <p>Deleting your account permanently removes your account, playlists, tracks, sequences and listening history stored by Sequencer on this device.</p>
+        <button class="btn btn-danger" id="deleteAccount" type="button">Delete my account</button>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="../js/app.js"></script>
+<script src="../js/user-store.js"></script>
+<script src="../js/site-auth.js"></script>
+<script src="../js/profile.js"></script>
+</body>
+</html>
