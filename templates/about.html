@@ -22,8 +22,10 @@
     <link rel="stylesheet" href="../css/about.css">
 
 
-<style>
-/* About page navbar + profile dropdown stacking fix */
+
+
+<style id="about-dropdown-layer-fix">
+/* Navbar scrolls normally, but its dropdown must layer above the hero/video */
 .nav {
     position: relative !important;
     z-index: 1000 !important;
@@ -31,13 +33,18 @@
 }
 
 .nav-inner,
-.nav-right {
+.nav-right,
+.profile-wrap {
     overflow: visible !important;
 }
 
 .profile-wrap {
     position: relative !important;
     z-index: 1001 !important;
+}
+
+.profile-menu {
+    z-index: 10000 !important;
 }
 
 .profile-menu[hidden] {
@@ -49,7 +56,6 @@
     position: absolute !important;
     top: calc(100% + 10px) !important;
     right: 0 !important;
-    z-index: 10000 !important;
 }
 </style>
 
@@ -110,41 +116,15 @@
 
         <div class="nav-right">
 
-            <div class="profile-wrap">
+            <a href="auth.html" class="btn btn-secondary btn-sm">
+                Sign in
+            </a>
 
-                <button
-                    class="profile-btn"
-                    type="button"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                >
-                    <div class="profile-avatar">K</div>
-                    <span class="profile-name">Profile</span>
-                    <span class="profile-chevron">⌄</span>
-                </button>
+            <a href="signup.html" class="btn btn-primary btn-sm">
+                Sign up
+            </a>
 
-                <div class="profile-menu" hidden>
-
-                    <div class="profile-menu-head">
-                        <div class="profile-avatar">K</div>
-
-                        <div>
-                            <strong>Profile</strong>
-                            <span>Your account</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-menu-divider"></div>
-
-                    <a href="profile.html" class="profile-option">View profile</a>
-                    <a href="library.html" class="profile-option">My library</a>
-                    <a href="auth.html" class="profile-option logout-option">Sign out</a>
-
-                </div>
-
-            </div>
-
-        </div>
+        </div>        </div>
 
     </div>
 
@@ -767,70 +747,9 @@
 </footer>
 
 
-<script>
-(() => {
-    const setupProfileDropdown = () => {
-        const profileBtn = document.querySelector(".profile-btn");
-        const profileMenu = document.querySelector(".profile-menu");
-
-        if (!profileBtn || !profileMenu) return;
-
-        const closeMenu = () => {
-            profileMenu.hidden = true;
-            profileBtn.setAttribute("aria-expanded", "false");
-        };
-
-        profileBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const willOpen = profileMenu.hidden;
-            profileMenu.hidden = !willOpen;
-            profileBtn.setAttribute("aria-expanded", String(willOpen));
-        });
-
-        profileMenu.addEventListener("click", (event) => {
-            event.stopPropagation();
-        });
-
-        document.addEventListener("click", closeMenu);
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") closeMenu();
-        });
-    };
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", setupProfileDropdown, { once: true });
-    } else {
-        setupProfileDropdown();
-    }
-})();
-</script>
 <script src="../js/about.js"></script>
 
 <script src="../js/site-auth.js"></script>
-<script>
-/* Re-bind if site-auth updates navbar content */
-window.addEventListener("load", () => {
-    const btn = document.querySelector(".profile-btn");
-    const menu = document.querySelector(".profile-menu");
-    if (!btn || !menu || btn.dataset.aboutDropdownBound) return;
-    btn.dataset.aboutDropdownBound = "true";
-    btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        menu.hidden = !menu.hidden;
-        btn.setAttribute("aria-expanded", String(!menu.hidden));
-    });
-    document.addEventListener("click", (e) => {
-        if (!e.target.closest(".profile-wrap")) {
-            menu.hidden = true;
-            btn.setAttribute("aria-expanded", "false");
-        }
-    });
-});
-</script>
 
 
 </body>
