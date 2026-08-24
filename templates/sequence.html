@@ -149,8 +149,8 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 32px;
-  max-width: 1080px;
+  padding: 18px 20px;
+  width: 100%;
   margin: 0 auto;
   gap: 24px;
 }
@@ -166,46 +166,71 @@ body::before {
 
 .logo .nav-viz { margin-left: 2px; }
 
-.nav-links {
+..nav-links {
   display: flex;
-  gap: 8px;
+  gap: 2px;
   align-items: center;
 }
 
 .nav-links a {
   position: relative;
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--mist);
-  padding: 8px 14px;
+  padding: 7px 14px;
   border-radius: var(--radius-sm);
-  transition: color 0.15s ease, background 0.15s ease;
+  transition: color 0.3s var(--ease);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 3px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--current), var(--signal));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease);
 }
 
 .nav-links a:hover {
   color: var(--chalk);
-  background: var(--paper);
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
 }
 
 .nav-links a.active {
   color: var(--chalk);
-  background: var(--fog);
+}
+
+.nav-links a.active::after {
+  transform: scaleX(1);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+
+.nav-links:hover a.active::after {
+  opacity: 0;
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
 }
 
 .nav-viz {
   display: flex;
   align-items: flex-end;
-  gap: 3px;
-  height: 16px;
+  gap: 2.5px;
+  height: 13px;
 }
 
 .nav-viz span {
-  width: 3px;
+  width: 2px;
   border-radius: 2px;
   background: var(--signal);
   animation: bounce 1.1s ease-in-out infinite;
@@ -2103,7 +2128,7 @@ body::before {
 .profile-menu-head strong { display:block; color:#fff; font-size:13px; }
 .profile-menu-head span { display:block; color:rgba(255,255,255,.55); font-size:11px; margin-top:3px; max-width:165px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .profile-menu-divider { height: 1px; background: rgba(255,255,255,.1); margin: 6px 2px; }
-.profile-option { width:100%; border:0; background:transparent; color:rgba(255,255,255,.85); text-align:left; padding:10px 11px; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; }
+.profile-option { display: block  ; width:100%; border:0; background:transparent; color:rgba(255,255,255,.85); text-align:left; padding:10px 11px; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; }
 .profile-option:hover { background:rgba(255,255,255,.08); color:#fff; }
 .logout-option { color:#ff6d9d; }
 .logout-option:hover { background:rgba(255,61,129,.1); color:#ff8bb2; }
