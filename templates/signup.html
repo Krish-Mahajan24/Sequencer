@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Create account — Sequencer</title><link rel="stylesheet" href="../css/auth.css">
+</head>
+<body class="auth-page">
+<div class="auth-noise"></div>
+<main class="auth-shell">
+  <section class="auth-visual signup-visual">
+    
+    <div class="visual-copy"><span>SEQUENCER</span><h1>Make the<br><em>vibe.</em></h1><p>Your playlists, your sound, your smoothest route.</p></div>
+  </section>
+  <section class="auth-panel">
+    <a class="back" href="index.html">← Back to Sequencer</a>
+    <div class="auth-card">
+      <div class="eyebrow">New account</div><h2>Sign up</h2><p class="muted">Create your account and save your playlists.</p>
+      <div id="notice" class="notice" role="alert"></div>
+      <form id="signupForm" novalidate>
+        <div class="two"><label>First name<input name="firstName" autocomplete="given-name" placeholder="First name" required></label><label>Last name<input name="lastName" autocomplete="family-name" placeholder="Last name" required></label></div>
+        <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" placeholder="At least 6 characters" required minlength="6"></label>
+        <label>Confirm password<input name="confirmPassword" type="password" autocomplete="new-password" placeholder="Repeat password" required minlength="6"></label>
+        <button class="main-btn" type="submit">Create account <span>→</span></button>
+      </form>
+      <div class="divider"><span>or continue with</span></div>
+      <div class="social-row">
+        <button class="social" data-provider="google" type="button"><b>G</b><span>Google</span></button>
+        <button class="social" data-provider="github" type="button"><b>●</b><span>GitHub</span></button>
+        <button class="social" data-provider="facebook" type="button"><b>f</b><span>Facebook</span></button>
+      </div>
+      <p class="switch">Already have an account? <a href="auth.html">Sign in</a></p>
+    </div>
+  </section>
+</main>
+<script src="../js/auth.js"></script>
+<script src="../js/user-store.js"></script>
+</body></html>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>About | Sequencer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../css/about.css">
+
+
+
+
+<style id="about-dropdown-layer-fix">
+/* Navbar scrolls normally, but its dropdown must layer above the hero/video */
+.nav {
+    position: relative !important;
+    z-index: 1000 !important;
+    overflow: visible !important;
+}
+
+.nav-inner,
+.nav-right,
+.profile-wrap {
+    overflow: visible !important;
+}
+
+.profile-wrap {
+    position: relative !important;
+    z-index: 1001 !important;
+}
+
+.profile-menu {
+    z-index: 10000 !important;
+}
+
+.profile-menu[hidden] {
+    display: none !important;
+}
+
+.profile-menu:not([hidden]) {
+    display: block !important;
+    position: absolute !important;
+    top: calc(100% + 10px) !important;
+    right: 0 !important;
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="nav" id="siteNav">
+
+    <div class="nav-inner">
+
+        <!-- LOGO -->
+
+        <a href="index.html" class="logo">
+
+            Sequencer
+
+            <span class="nav-viz" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+
+        </a>
+
+
+        <!-- NAVIGATION LINKS -->
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="about.html" class="active">
+                About
+            </a>
+
+            <a href="library.html">
+                Library
+            </a>
+
+            <a href="sequence.html">
+                Sequence
+            </a>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="nav-right">
+
+            <a href="auth.html" class="btn btn-secondary btn-sm">
+                Sign in
+            </a>
+
+            <a href="signup.html" class="btn btn-primary btn-sm">
+                Sign up
+            </a>
+
+        </div>        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main>
+
+
+    <!-- =========================================================
+         HERO / VIDEO
+    ========================================================= -->
+
+    <section class="hero" id="top">
+
+
+        <!-- BACKGROUND VIDEO -->
+
+        <video
+            class="hero-video"
+            id="heroVideo"
+            autoplay
+            muted
+            defaultMuted
+            loop
+            playsinline
+            webkit-playsinline
+            preload="auto"
+        >
+
+            <source
+                src="../assets/about-bg.mp4"
+                type="video/mp4"
+            >
+
+        </video>
+
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-glow"></div>
+
+
+        <!-- HERO CONTENT -->
+
+        <div class="hero-content">
+
+
+            <h1 class="hero-title">
+
+                ABOUT
+
+                <br>
+
+                <span>
+                    SEQUENCER
+                </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                A place where sound, rhythm and technology
+                come together to create something worth
+                listening to.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a
+                    href="#story"
+                    class="primary-button"
+                >
+                    Discover our story →
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================================
+         STORY
+    ========================================================= -->
+
+    <section
+        class="story-section"
+        id="story"
+    >
+
+        <div class="story-container">
+
+
+            <div>
+
+                <h2 class="story-title">
+
+                    A HARMONY
+
+                    <br>
+
+                    OF
+
+                    <span>
+                        CREATIVITY
+                    </span>
+
+                    <br>
+
+                    AND SOUND
+
+                </h2>
+
+            </div>
+
+
+
+            <div class="story-text">
+
+
+                <p>
+
+                    Sequencer brings together ideas,
+                    artists and technology in one space
+                    built for people who believe music
+                    should be experienced, not simply
+                    played.
+
+                </p>
+
+
+                <p>
+
+                    We explore new ways to create,
+                    arrange and share sound while
+                    respecting the craft and emotion
+                    behind every performance.
+
+                </p>
+
+
+                <a
+                    href="library.html"
+                    class="text-link"
+                >
+                    Explore the library →
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================================
+         MUSICIANS IMAGE
+    ========================================================= -->
+
+    <section class="musicians-section">
+
+
+        <div class="musicians-image-wrapper">
+
+
+            <img
+                class="musicians-image"
+                src="../assets/img/violin.jpg"
+                alt="String musicians performing together"
+                loading="eager"
+            >
+
+
+            <div class="musicians-overlay"></div>
+
+
+            <!-- TEXT ON IMAGE -->
+
+            <div class="image-message">
+
+
+                <h2>
+
+                    MUSIC
+
+                    <br>
+
+                    THAT
+
+                    <span>
+                        MOVES.
+                    </span>
+
+                </h2>
+
+
+                <p>
+
+                    Every track has a place.
+                    Sequencer helps you shape playlists
+                    that move naturally from one mood,
+                    energy, and moment to the next.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================================
+         MISSION
+    ========================================================= -->
+
+    <section class="mission-section">
+
+
+        <div class="mission-container">
+
+
+            <div>
+
+
+                <div class="section-number">
+
+                    01 — OUR PURPOSE
+
+                </div>
+
+
+                <h2 class="mission-title">
+
+                    BUILT FOR
+
+                    <br>
+
+                    THE
+
+                    <br>
+
+                    <span style="color: var(--pink);">
+
+                        SOUND
+
+                    </span>
+
+                </h2>
+
+
+            </div>
+
+
+
+            <div class="mission-copy">
+
+
+                <p>
+
+                    Sequencer is designed around
+                    the idea that discovering music
+                    should feel as creative as making it.
+
+                </p>
+
+
+                <p>
+
+                    From exploring tracks to building
+                    sequences, every part of the
+                    experience is designed to connect
+                    people with sound in a more
+                    meaningful way.
+
+                </p>
+
+
+                <p>
+
+                    We combine technology, rhythm,
+                    mood and human creativity to
+                    create a different way of
+                    experiencing music.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+
+            <div class="stat">
+
+
+                <div class="stat-number">
+
+                    01<span>+</span>
+
+                </div>
+
+
+                <div class="stat-label">
+
+                    Creative platform
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="stat">
+
+
+                <div class="stat-number">
+
+                    03<span>+</span>
+
+                </div>
+
+
+                <div class="stat-label">
+
+                    Musical dimensions
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="stat">
+
+
+                <div class="stat-number">
+
+                    ∞
+
+                </div>
+
+
+                <div class="stat-label">
+
+                    Ways to experience sound
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =========================================================
+         FOOTER IMAGE
+    ========================================================= -->
+
+    <section class="footer-image-section">
+
+
+        <img
+            class="footer-image"
+            src="../assets/img/performer.jpg"
+            alt="Musicians performing"
+            loading="eager"
+        >
+
+
+        <div class="footer-image-overlay"></div>
+
+
+        <div class="footer-content">
+
+
+            <h2 class="footer-title">
+
+                EXPERIENCE
+
+                <br>
+
+                <span>
+
+                    THE SOUND.
+
+                </span>
+
+            </h2>
+
+
+            <p class="footer-small">
+
+                Explore music differently.
+                Discover new sounds, create
+                sequences and find your rhythm
+                with Sequencer.
+
+            </p>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="footer-main">
+
+
+    <div class="wrap footer-grid">
+
+
+        <!-- BRAND -->
+
+        <div class="footer-brand">
+
+
+            <p>
+
+                A mood-transition playlist ordering tool.
+                Tag tempo, energy, and mood — get back the
+                smoothest possible route through your library.
+
+            </p>
+
+
+            <div class="footer-social">
+
+                <a href="#" aria-label="GitHub">
+                    GH
+                </a>
+
+                <a href="#" aria-label="Twitter">
+                    X
+                </a>
+
+                <a href="#" aria-label="Instagram">
+                    IG
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- NAVIGATE -->
+
+        <div class="footer-col">
+
+
+            <span class="footer-col-label">
+
+                Navigate
+
+            </span>
+
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="library.html">
+                Library
+            </a>
+
+            <a href="sequence.html">
+                Sequence
+            </a>
+
+
+        </div>
+
+
+
+        <!-- ACCOUNT -->
+
+        <div class="footer-col">
+
+
+            <span class="footer-col-label">
+
+                Account
+
+            </span>
+
+
+            <a href="auth.html">
+                Sign in
+            </a>
+
+            <a href="signup.html">
+                Sign up
+            </a>
+
+            <a href="profile.html">
+                Profile
+            </a>
+
+
+        </div>
+
+
+
+        <!-- PROJECT -->
+
+        <div class="footer-col">
+
+
+            <span class="footer-col-label">
+
+                Project
+
+            </span>
+
+
+            <span class="mono">
+
+                Sequencer — phase 1
+
+            </span>
+
+
+            <span class="mono">
+
+                v0.1 · JS
+
+            </span>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- FOOTER BOTTOM -->
+
+    <div class="wrap footer-bottom">
+
+
+        <span>
+
+            © 2026 Sequencer.
+            Built to thread eight songs — or eight hundred.
+
+        </span>
+
+
+        <span class="footer-status mono">
+
+            All systems operational
+
+        </span>
+
+
+        <button
+            class="to-top"
+            id="toTop"
+            aria-label="Back to top"
+        >
+
+            ↑
+
+        </button>
+
+
+    </div>
+
+
+</footer>
+
+
+<script src="../js/about.js"></script>
+
+<script src="../js/site-auth.js"></script>
+
+
+</body>
+
+</html>
