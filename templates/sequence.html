@@ -131,11 +131,11 @@ body::before {
 
 .nav {
   border-bottom: 1px solid var(--line-soft);
-  position: sticky;
-  top: 0;
+  position: relative;
+ 
   background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(10px);
-  z-index: 10;
+  z-index: 1000;
   transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -2520,7 +2520,7 @@ body::before {
 .profile-menu-head strong { display:block; color:#fff; font-size:13px; }
 .profile-menu-head span { display:block; color:rgba(255,255,255,.55); font-size:11px; margin-top:3px; max-width:165px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .profile-menu-divider { height: 1px; background: rgba(255,255,255,.1); margin: 6px 2px; }
-.profile-option { width:100%; border:0; background:transparent; color:rgba(255,255,255,.85); text-align:left; padding:10px 11px; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; }
+.profile-option { display: block ;width:100%; border:0; background:transparent; color:rgba(255,255,255,.85); text-align:left; padding:10px 11px; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; }
 .profile-option:hover { background:rgba(255,255,255,.08); color:#fff; }
 .logout-option { color:#ff6d9d; }
 .logout-option:hover { background:rgba(255,61,129,.1); color:#ff8bb2; }
@@ -2990,7 +2990,7 @@ body::before {
 <footer class="footer-main">
   <div class="wrap footer-grid">
     <div class="footer-brand">
-      <a href="index.html" class="logo">Sequencer</a>
+     
       <p>A mood-transition playlist ordering tool. Tag tempo, energy, and mood — get back the smoothest possible route through your library.</p>
     </div>
     <div class="footer-col">
