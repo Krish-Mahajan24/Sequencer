@@ -2826,22 +2826,6 @@ document.addEventListener('DOMContentLoaded', () => {
           String(id)
       );
 
-  const recordPlayHistory = (track) => {
-    if (!window.SequencerStore || !track) return;
-    const history = window.SequencerStore.get('history', []);
-    const entry = {
-      id: track.id,
-      title: track.title || 'Unknown track',
-      artist: track.artist || 'Unknown artist',
-      artwork: track.artwork || '',
-      playedAt: new Date().toISOString()
-    };
-    const filtered = Array.isArray(history)
-      ? history.filter(item => !(String(item.id) === String(entry.id) && Date.now() - new Date(item.playedAt || 0).getTime() < 60000))
-      : [];
-    window.SequencerStore.set('history', [entry, ...filtered].slice(0, 100));
-  };
-
   const setPlayingUI =
     (id) => {
 
@@ -2965,8 +2949,6 @@ document.addEventListener('DOMContentLoaded', () => {
         audio.load();
 
         await audio.play();
-
-        recordPlayHistory(track);
 
         playingId =
           String(id);
