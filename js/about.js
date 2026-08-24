@@ -1,356 +1,172 @@
-/* =========================================================
-   SEQUENCER ABOUT PAGE
-   ========================================================= */
+   document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-
-/* =========================================================
-   WAIT FOR PAGE
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-
-        /* =====================================================
-           HERO VIDEO
-           ===================================================== */
-
-        const video =
-            document.getElementById(
-                "heroVideo"
-            );
-
-
-        if (video) {
-
-            /*
-             * Force the video to remain muted.
-             *
-             * This is important because browsers
-             * normally block autoplay videos that
-             * contain sound.
-             */
-
-            video.muted = true;
-
-            video.setAttribute(
-                "muted",
-                ""
-            );
-
-            video.setAttribute(
-                "playsinline",
-                ""
-            );
-
-
-            /*
-             * Try to start the video.
-             */
-
-            function startVideo() {
-
-                const playPromise =
-                    video.play();
-
+                const video =
+                    document.getElementById("heroVideo");
 
                 /*
-                 * Some browsers return a Promise
-                 * from video.play().
+                 * Force the Wix video to start.
+                 * Because it is muted + playsinline,
+                 * browsers normally allow autoplay.
+                 */
+if (video) {
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+
+    const startVideo = () => {
+
+        const playPromise = video.play();
+
+        if (playPromise !== undefined) {
+
+            playPromise.catch(() => {
+
+                /*
+                 * If Safari temporarily blocks playback,
+                 * retry when the video becomes ready.
                  */
 
-                if (
-                    playPromise !== undefined
-                ) {
+            });
 
-                    playPromise.catch(
-                        function () {
+        }
 
-                            /*
-                             * Autoplay may be blocked
-                             * until the user interacts
-                             * with the page.
-                             *
-                             * We do not show an error
-                             * because the video poster/
-                             * background remains available.
-                             */
-
-                        }
-                    );
-
-                }
-
-            }
+    };
 
 
-            /*
-             * Start immediately.
-             */
+    /*
+     * Start immediately instead of waiting
+     * for the rest of the page.
+     */
 
-            startVideo();
-
-
-            /*
-             * Some browsers are more reliable
-             * when playback is attempted after
-             * the first user interaction.
-             */
-
-            const interactionEvents = [
-                "click",
-                "touchstart",
-                "scroll",
-                "keydown"
-            ];
+    startVideo();
 
 
-            function interactionStart() {
+    /*
+     * Retry as soon as enough video data is available.
+     */
+
+    video.addEventListener(
+        "loadeddata",
+        startVideo,
+        { once: true }
+    );
+
+
+    video.addEventListener(
+        "canplay",
+        startVideo,
+        { once: true }
+    );
+
+
+    /*
+     * Resume when returning to the page.
+     */
+
+    document.addEventListener(
+        "visibilitychange",
+        function () {
+
+            if (
+                document.visibilityState === "visible"
+            ) {
 
                 startVideo();
 
-                /*
-                 * Once the user interacts,
-                 * we don't need these listeners anymore.
-                 */
-
-                interactionEvents.forEach(
-                    function (eventName) {
-
-                        document.removeEventListener(
-                            eventName,
-                            interactionStart
-                        );
-
-                    }
-                );
-
             }
 
-
-            interactionEvents.forEach(
-                function (eventName) {
-
-                    document.addEventListener(
-                        eventName,
-                        interactionStart,
-                        {
-                            once: true,
-                            passive: true
-                        }
-                    );
-
-                }
-            );
-
-
-            /*
-             * If the user switches tabs,
-             * pause the video.
-             *
-             * When they return, start it again.
-             */
-
-            document.addEventListener(
-                "visibilitychange",
-                function () {
-
-                    if (
-                        document.hidden
-                    ) {
-
-                        video.pause();
-
-                    } else {
-
-                        startVideo();
-
-                    }
-
-                }
-            );
-
         }
+    );
 
+}
 
+                /*
+                 * Simple mobile menu behavior.
+                 */
 
-        /* =====================================================
-           MOBILE MENU
-           ===================================================== */
-
-        const menuButton =
-            document.getElementById(
-                "menuButton"
-            );
-
-
-        const navLinks =
-            document.querySelector(
-                ".nav-links"
-            );
-
-
-        if (
-            menuButton &&
-            navLinks
-        ) {
-
-            menuButton.addEventListener(
-                "click",
-                function () {
-
-                    navLinks.classList.toggle(
-                        "open"
+                const menuButton =
+                    document.getElementById(
+                        "menuButton"
                     );
 
-                }
-            );
+                const nav =
+                    document.querySelector(
+                        ".nav-links"
+                    );
 
 
-            /*
-             * Close mobile menu after
-             * clicking a navigation link.
-             */
+                if (
+                    menuButton &&
+                    nav
+                ) {
 
-            const links =
-                navLinks.querySelectorAll(
-                    "a"
-                );
-
-
-            links.forEach(
-                function (link) {
-
-                    link.addEventListener(
+                    menuButton.addEventListener(
                         "click",
                         function () {
 
-                            navLinks.classList.remove(
-                                "open"
-                            );
+                            const isOpen =
+                                nav.classList.contains(
+                                    "mobile-open"
+                                );
+
+
+                            if (!isOpen) {
+
+                                nav.classList.add(
+                                    "mobile-open"
+                                );
+
+                                nav.style.display =
+                                    "flex";
+
+                                nav.style.position =
+                                    "absolute";
+
+                                nav.style.top =
+                                    "72px";
+
+                                nav.style.left =
+                                    "16px";
+
+                                nav.style.right =
+                                    "16px";
+
+                                nav.style.padding =
+                                    "12px";
+
+                                nav.style.flexDirection =
+                                    "column";
+
+                                nav.style.alignItems =
+                                    "stretch";
+
+                                nav.style.background =
+                                    "rgba(10,5,10,.98)";
+
+                                nav.style.border =
+                                    "1px solid rgba(255,59,141,.2)";
+
+                                nav.style.borderRadius =
+                                    "12px";
+
+                            } else {
+
+                                nav.classList.remove(
+                                    "mobile-open"
+                                );
+
+                                nav.style.display =
+                                    "";
+
+                            }
 
                         }
                     );
 
                 }
-            );
 
-        }
-
-
-
-        /* =====================================================
-           SCROLL REVEAL
-           ===================================================== */
-
-        const revealElements =
-            document.querySelectorAll(
-                ".reveal"
-            );
-
-
-        /*
-         * If the browser supports
-         * IntersectionObserver,
-         * use it for smooth reveal animations.
-         */
-
-        if (
-            "IntersectionObserver"
-            in window
-        ) {
-
-            const observer =
-                new IntersectionObserver(
-                    function (
-                        entries,
-                        observerInstance
-                    ) {
-
-                        entries.forEach(
-                            function (entry) {
-
-                                if (
-                                    entry.isIntersecting
-                                ) {
-
-                                    entry.target.classList.add(
-                                        "visible"
-                                    );
-
-
-                                    /*
-                                     * Stop observing this
-                                     * element after it appears.
-                                     */
-
-                                    observerInstance.unobserve(
-                                        entry.target
-                                    );
-
-                                }
-
-                            }
-                        );
-
-                    },
-                    {
-                        threshold: 0.12
-                    }
-                );
-
-
-            revealElements.forEach(
-                function (element) {
-
-                    observer.observe(
-                        element
-                    );
-
-                }
-            );
-
-
-        } else {
-
-            /*
-             * Older browsers:
-             * simply show everything.
-             */
-
-            revealElements.forEach(
-                function (element) {
-
-                    element.classList.add(
-                        "visible"
-                    );
-
-                }
-            );
-
-        }
-
-
-
-        /* =====================================================
-           FOOTER YEAR
-           ===================================================== */
-
-        const year =
-            document.getElementById(
-                "year"
-            );
-
-
-        if (year) {
-
-            year.textContent =
-                new Date()
-                    .getFullYear();
-
-        }
-
-
-    }
-);
+            }
+        );
