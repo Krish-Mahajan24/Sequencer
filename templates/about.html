@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>About | Sequencer</title>
+
+    <style>
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #050305;
+            color: #f7f3f7;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+
+        /* =========================================================
+           COLORS
+        ========================================================= */
+
+        :root {
+            --black: #050305;
+            --black-soft: #0b070b;
+
+            /* Sequencer pink */
+            --pink: #ff3b8d;
+            --pink-light: #ff6eaa;
+            --pink-soft: #eeb3cc;
+
+            --purple-black: #160d16;
+            --border: rgba(255, 59, 141, 0.22);
+
+            --white: #f8f5f8;
+            --muted: #a99da8;
+        }
+
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 88px;
+
+            z-index: 1000;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(5, 3, 5, 0.92);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .nav-inner {
+            width: min(1260px, calc(100% - 80px));
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+
+        /* LOGO */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-bars {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+        }
+
+        .logo-bars span {
+            display: block;
+            width: 3px;
+            background: var(--pink);
+            border-radius: 4px;
+        }
+
+        .logo-bars span:nth-child(1) {
+            height: 8px;
+        }
+
+        .logo-bars span:nth-child(2) {
+            height: 16px;
+        }
+
+        .logo-bars span:nth-child(3) {
+            height: 11px;
+        }
+
+        .logo-bars span:nth-child(4) {
+            height: 6px;
+        }
+
+
+        /* NAV LINKS */
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link {
+            padding: 14px 18px;
+
+            color: #a99da8;
+
+            font-size: 15px;
+            font-weight: 500;
+
+            border-radius: 8px;
+
+            transition:
+                color 0.25s ease,
+                background 0.25s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 59, 141, 0.08);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: rgba(255, 59, 141, 0.12);
+        }
+
+
+        /* NAV BUTTONS */
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sign-in {
+            padding: 13px 20px;
+
+            color: white;
+
+            border: 1px solid rgba(255, 59, 141, 0.25);
+            border-radius: 8px;
+
+            background: transparent;
+
+            font-weight: 600;
+
+            transition: 0.25s ease;
+        }
+
+        .sign-in:hover {
+            border-color: var(--pink);
+            color: var(--pink-light);
+        }
+
+        .sign-up {
+            padding: 14px 21px;
+
+            color: #080508;
+
+            background: #f8f5f8;
+
+            border: none;
+            border-radius: 8px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        .sign-up:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 59, 141, 0.18);
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+            position: relative;
+
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+
+            overflow: hidden;
+
+            background: #050305;
+        }
+
+
+        /* VIDEO */
+
+        .hero-video {
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            z-index: 0;
+
+            opacity: 0.82;
+
+            pointer-events: none;
+        }
+
+
+        /* DARK/PINK OVERLAY */
+
+        .hero-overlay {
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 1;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(5, 3, 5, 0.92) 0%,
+                    rgba(5, 3, 5, 0.72) 34%,
+                    rgba(5, 3, 5, 0.20) 72%,
+                    rgba(5, 3, 5, 0.55) 100%
+                );
+        }
+
+
+        /* SUBTLE PINK GLOW */
+
+        .hero-glow {
+            position: absolute;
+
+            width: 650px;
+            height: 650px;
+
+            right: -220px;
+            bottom: -300px;
+
+            border-radius: 50%;
+
+            background: rgba(255, 59, 141, 0.16);
+
+            filter: blur(100px);
+
+            z-index: 1;
+
+            pointer-events: none;
+        }
+
+
+        /* HERO CONTENT */
+
+        .hero-content {
+            position: relative;
+
+            z-index: 2;
+
+            width: min(1260px, calc(100% - 80px));
+
+            margin: 0 auto;
+
+            padding-top: 88px;
+        }
+
+        .hero-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 25px;
+
+            color: var(--pink-light);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .hero-small::before {
+            content: "";
+
+            width: 32px;
+            height: 1px;
+
+            background: var(--pink);
+        }
+
+
+        .hero-title {
+            max-width: 760px;
+
+            font-size: clamp(60px, 8vw, 125px);
+
+            line-height: 0.87;
+
+            letter-spacing: -7px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+        .hero-title span {
+            color: var(--pink);
+        }
+
+
+        .hero-description {
+            max-width: 590px;
+
+            margin-top: 38px;
+
+            color: #d5cbd4;
+
+            font-size: 18px;
+
+            line-height: 1.65;
+        }
+
+
+        .hero-buttons {
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 38px;
+        }
+
+        .primary-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 15px 23px;
+
+            color: #090509;
+
+            background: #f8f5f8;
+
+            border-radius: 8px;
+
+            font-weight: 700;
+
+            transition: 0.25s ease;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            background: var(--pink-light);
+        }
+
+        .secondary-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 15px 23px;
+
+            color: white;
+
+            border: 1px solid rgba(255, 59, 141, 0.35);
+
+            border-radius: 8px;
+
+            transition: 0.25s ease;
+        }
+
+        .secondary-button:hover {
+            background: rgba(255, 59, 141, 0.10);
+            border-color: var(--pink);
+        }
+
+
+        /* SCROLL */
+
+        .scroll-indicator {
+            position: absolute;
+
+            left: 50%;
+            bottom: 28px;
+
+            transform: translateX(-50%);
+
+            z-index: 3;
+
+            color: #aaa;
+
+            font-size: 11px;
+
+            letter-spacing: 3px;
+
+            text-transform: uppercase;
+        }
+
+        .scroll-indicator::after {
+            content: "";
+
+            display: block;
+
+            width: 1px;
+            height: 42px;
+
+            margin: 12px auto 0;
+
+            background: linear-gradient(
+                to bottom,
+                var(--pink),
+                transparent
+            );
+        }
+
+
+        /* =========================================================
+           PINK ABOUT SECTION
+        ========================================================= */
+
+        .story-section {
+            position: relative;
+
+            background:
+                radial-gradient(
+                    circle at 20% 30%,
+                    rgba(255, 59, 141, 0.13),
+                    transparent 30%
+                ),
+                #160b13;
+
+            padding: 130px 0 120px;
+
+            overflow: hidden;
+        }
+
+        .story-container {
+            width: min(1260px, calc(100% - 80px));
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 100px;
+
+            align-items: start;
+        }
+
+
+        .story-title {
+            font-size: clamp(60px, 7vw, 110px);
+
+            line-height: 0.82;
+
+            letter-spacing: -5px;
+
+            text-transform: uppercase;
+
+            font-weight: 800;
+
+            color: white;
+        }
+
+        .story-title span {
+            color: var(--pink);
+        }
+
+
+        .story-text {
+            padding-top: 10px;
+        }
+
+        .story-text p {
+            margin-bottom: 30px;
+
+            color: #ddd0da;
+
+            font-size: 18px;
+
+            line-height: 1.65;
+        }
+
+        .text-link {
+            display: inline-flex;
+
+            color: var(--pink-light);
+
+            font-weight: 700;
+
+            padding-bottom: 8px;
+
+            border-bottom: 1px solid var(--pink);
+
+            transition: 0.25s ease;
+        }
+
+        .text-link:hover {
+            color: white;
+            border-color: white;
+        }
+
+
+        /* =========================================================
+           MIDDLE IMAGE
+        ========================================================= */
+
+        .musicians-section {
+            position: relative;
+
+            background: #080508;
+
+            padding: 0;
+
+            overflow: hidden;
+        }
+
+        .musicians-image-wrapper {
+            position: relative;
+
+            width: 100%;
+
+            height: min(75vh, 780px);
+
+            overflow: hidden;
+        }
+
+        .musicians-image {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+
+            object-position: center;
+
+            opacity: 0.92;
+
+            transform: scale(1.01);
+
+            transition: transform 1.2s ease;
+        }
+
+        .musicians-image-wrapper:hover .musicians-image {
+            transform: scale(1.035);
+        }
+
+
+        .musicians-overlay {
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(5, 3, 5, 0.05),
+                    rgba(5, 3, 5, 0.18)
+                );
+        }
+
+
+        .image-label {
+            position: absolute;
+
+            left: 6%;
+            bottom: 50px;
+
+            color: white;
+
+            font-size: 13px;
+
+            letter-spacing: 3px;
+
+            text-transform: uppercase;
+        }
+
+        .image-label span {
+            color: var(--pink);
+        }
+
+
+        /* =========================================================
+           MISSION SECTION
+        ========================================================= */
+
+        .mission-section {
+            background: #050305;
+
+            padding: 130px 0;
+        }
+
+        .mission-container {
+            width: min(1260px, calc(100% - 80px));
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: 0.9fr 1.1fr;
+
+            gap: 120px;
+        }
+
+        .section-number {
+            color: var(--pink);
+
+            font-size: 13px;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 25px;
+        }
+
+        .mission-title {
+            font-size: clamp(55px, 6vw, 95px);
+
+            line-height: 0.85;
+
+            letter-spacing: -5px;
+
+            text-transform: uppercase;
+        }
+
+        .mission-copy {
+            padding-top: 35px;
+        }
+
+        .mission-copy p {
+            color: #b9adb7;
+
+            font-size: 19px;
+
+            line-height: 1.75;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================================================
+           STATS
+        ========================================================= */
+
+        .stats {
+            width: min(1260px, calc(100% - 80px));
+
+            margin: 70px auto 0;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            border-top: 1px solid rgba(255, 59, 141, 0.2);
+
+            border-bottom: 1px solid rgba(255, 59, 141, 0.2);
+        }
+
+        .stat {
+            padding: 35px 30px;
+
+            border-right: 1px solid rgba(255, 59, 141, 0.2);
+        }
+
+        .stat:last-child {
+            border-right: none;
+        }
+
+        .stat-number {
+            color: white;
+
+            font-size: 50px;
+
+            font-weight: 800;
+        }
+
+        .stat-number span {
+            color: var(--pink);
+        }
+
+        .stat-label {
+            margin-top: 8px;
+
+            color: #8e818c;
+
+            font-size: 13px;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =========================================================
+           FOOTER IMAGE
+        ========================================================= */
+
+        .footer-image-section {
+            position: relative;
+
+            height: 650px;
+
+            overflow: hidden;
+
+            background: #090609;
+        }
+
+        .footer-image {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            object-position: center;
+
+            display: block;
+
+            opacity: 0.72;
+
+            filter: saturate(0.85);
+        }
+
+        .footer-image-overlay {
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(5, 3, 5, 0.10),
+                    rgba(5, 3, 5, 0.88)
+                );
+        }
+
+        .footer-content {
+            position: absolute;
+
+            left: 6%;
+            right: 6%;
+            bottom: 65px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: end;
+        }
+
+        .footer-title {
+            max-width: 700px;
+
+            color: white;
+
+            font-size: clamp(55px, 7vw, 110px);
+
+            line-height: 0.85;
+
+            letter-spacing: -5px;
+
+            text-transform: uppercase;
+        }
+
+        .footer-title span {
+            color: var(--pink);
+        }
+
+        .footer-small {
+            color: #d0c4ce;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            max-width: 280px;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+            background: #050305;
+
+            border-top: 1px solid rgba(255, 59, 141, 0.18);
+
+            padding: 35px 0;
+        }
+
+        .footer-inner {
+            width: min(1260px, calc(100% - 80px));
+
+            margin: auto;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .copyright {
+            color: #756a74;
+
+            font-size: 13px;
+        }
+
+        .footer-links {
+            display: flex;
+
+            gap: 25px;
+        }
+
+        .footer-links a {
+            color: #9c909b;
+
+            font-size: 13px;
+
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--pink);
+        }
+
+
+        /* =========================================================
+           MOBILE MENU
+        ========================================================= */
+
+        .menu-button {
+            display: none;
+
+            width: 44px;
+            height: 40px;
+
+            border: 1px solid rgba(255, 59, 141, 0.25);
+
+            border-radius: 8px;
+
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 1000px) {
+
+            .nav-inner,
+            .hero-content,
+            .story-container,
+            .mission-container,
+            .stats,
+            .footer-inner {
+                width: min(100% - 40px, 800px);
+            }
+
+            .nav-links,
+            .nav-actions {
+                display: none;
+            }
+
+            .menu-button {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: clamp(55px, 11vw, 95px);
+            }
+
+            .story-container,
+            .mission-container {
+                grid-template-columns: 1fr;
+
+                gap: 55px;
+            }
+
+            .story-title {
+                max-width: 700px;
+            }
+
+            .musicians-image-wrapper {
+                height: 55vh;
+            }
+
+            .footer-content {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 30px;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                height: 72px;
+            }
+
+            .nav-inner,
+            .hero-content,
+            .story-container,
+            .mission-container,
+            .stats,
+            .footer-inner {
+                width: calc(100% - 32px);
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .hero {
+                min-height: 90vh;
+            }
+
+            .hero-content {
+                padding-top: 72px;
+            }
+
+            .hero-title {
+                font-size: 56px;
+
+                letter-spacing: -3px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+
+                align-items: stretch;
+
+                max-width: 260px;
+            }
+
+            .primary-button,
+            .secondary-button {
+                width: 100%;
+            }
+
+            .story-section,
+            .mission-section {
+                padding: 85px 0;
+            }
+
+            .story-title,
+            .mission-title,
+            .footer-title {
+                font-size: 55px;
+
+                letter-spacing: -3px;
+            }
+
+            .story-text p,
+            .mission-copy p {
+                font-size: 16px;
+            }
+
+            .musicians-image-wrapper {
+                height: 420px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat {
+                border-right: none;
+
+                border-bottom: 1px solid rgba(255, 59, 141, 0.2);
+            }
+
+            .stat:last-child {
+                border-bottom: none;
+            }
+
+            .footer-image-section {
+                height: 500px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 20px;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+            }
+        }
+
+
+        /* =========================================================
+           VIDEO FALLBACK
+        ========================================================= */
+
+        .video-fallback {
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            z-index: -1;
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================= -->
+
+    <header class="navbar">
+
+        <div class="nav-inner">
+
+            <a href="index.html" class="logo">
+
+                <span>Sequencer</span>
+
+                <span class="logo-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+
+            </a>
+
+
+            <nav class="nav-links">
+
+                <a href="index.html" class="nav-link">
+                    Home
+                </a>
+
+                <a href="library.html" class="nav-link">
+                    Library
+                </a>
+
+                <a href="sequence.html" class="nav-link">
+                    Sequence
+                </a>
+
+                <a
+                    href="about.html"
+                    class="nav-link active"
+                >
+                    About
+                </a>
+
+            </nav>
+
+
+            <div class="nav-actions">
+
+                <a href="signin.html" class="sign-in">
+                    Sign in
+                </a>
+
+                <a href="signup.html" class="sign-up">
+                    Sign up
+                </a>
+
+            </div>
+
+
+            <button
+                class="menu-button"
+                id="menuButton"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================================
+         HERO / VIDEO
+    ========================================================= -->
+
+    <main>
+
+        <section class="hero" id="top">
+
+
+            <!-- YOUR WIX VIDEO -->
+
+            <video
+                class="hero-video"
+                id="heroVideo"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+
+                poster="https://static.wixstatic.com/media/c837a6_89c07cab18d94642a6cd6c165cc72655f000.jpg/v1/fill/w_3840,h_2880,al_c,q_90,enc_auto/c837a6_89c07cab18d94642a6cd6c165cc72655f000.jpg"
+            >
+
+                <source
+                    src="https://video.wixstatic.com/video/c837a6_89c07cab18d94642a6cd6c165cc72655/1080p/mp4/file.mp4"
+                    type="video/mp4"
+                >
+
+                <source
+                    src="https://video.wixstatic.com/video/c837a6_89c07cab18d94642a6cd6c165cc72655/720p/mp4/file.mp4"
+                    type="video/mp4"
+                >
+
+            </video>
+
+
+            <div class="hero-overlay"></div>
+
+            <div class="hero-glow"></div>
+
+
+            <div class="hero-content">
+
+                <div class="hero-small">
+                    THE ART OF SOUND
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    ABOUT
+                    <br>
+
+                    <span>SEQUENCER</span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    A place where sound, rhythm and technology
+                    come together to create something worth
+                    listening to.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="#story"
+                        class="primary-button"
+                    >
+                        Discover our story →
+                    </a>
+
+                    <a
+                        href="#story"
+                        class="secondary-button"
+                    >
+                        Scroll ↓
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="scroll-indicator">
+                Scroll
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             STORY / PINK SECTION
+        ====================================================== -->
+
+        <section
+            class="story-section"
+            id="story"
+        >
+
+            <div class="story-container">
+
+
+                <div>
+
+                    <h2 class="story-title">
+
+                        A HARMONY
+                        <br>
+
+                        OF <span>CREATIVITY</span>
+                        <br>
+
+                        AND SOUND
+
+                    </h2>
+
+                </div>
+
+
+                <div class="story-text">
+
+                    <p>
+
+                        Sequencer brings together ideas,
+                        artists and technology in one space
+                        built for people who believe music
+                        should be experienced, not simply
+                        played.
+
+                    </p>
+
+
+                    <p>
+
+                        We explore new ways to create,
+                        arrange and share sound while
+                        respecting the craft and emotion
+                        behind every performance.
+
+                    </p>
+
+
+                    <a
+                        href="library.html"
+                        class="text-link"
+                    >
+                        Explore the library →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             MIDDLE IMAGE
+        ====================================================== -->
+
+        <section class="musicians-section">
+
+            <div class="musicians-image-wrapper">
+
+                <img
+                    class="musicians-image"
+                    src="https://static.wixstatic.com/media/c837a6_89c07cab18d94642a6cd6c165cc72655f000.jpg/v1/fill/w_3840,h_2880,al_c,q_90,enc_auto/c837a6_89c07cab18d94642a6cd6c165cc72655f000.jpg"
+                    alt="Sequencer musicians"
+                    loading="lazy"
+                >
+
+                <div class="musicians-overlay"></div>
+
+
+                <div class="image-label">
+
+                    SEQUENCER
+                    <span> / MUSICIANS</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             MISSION
+        ====================================================== -->
+
+        <section class="mission-section">
+
+            <div class="mission-container">
+
+
+                <div>
+
+                    <div class="section-number">
+                        01 — OUR PURPOSE
+                    </div>
+
+
+                    <h2 class="mission-title">
+
+                        BUILT FOR
+                        <br>
+
+                        THE
+                        <br>
+
+                        <span style="color: var(--pink);">
+                            SOUND
+                        </span>
+
+                    </h2>
+
+                </div>
+
+
+                <div class="mission-copy">
+
+                    <p>
+
+                        Sequencer is designed around
+                        the idea that discovering music
+                        should feel as creative as making it.
+
+                    </p>
+
+
+                    <p>
+
+                        From exploring tracks to building
+                        sequences, every part of the
+                        experience is designed to connect
+                        people with sound in a more
+                        meaningful way.
+
+                    </p>
+
+
+                    <p>
+
+                        We combine technology, rhythm,
+                        mood and human creativity to
+                        create a different way of
+                        experiencing music.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- STATS -->
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        01<span>+</span>
+                    </div>
+
+                    <div class="stat-label">
+                        Creative platform
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        03<span>+</span>
+                    </div>
+
+                    <div class="stat-label">
+                        Musical dimensions
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ∞
+                    </div>
+
+                    <div class="stat-label">
+                        Ways to experience sound
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             FOOTER IMAGE
+        ====================================================== -->
+
+        <section class="footer-image-section">
+
+            <img
+                class="footer-image"
+                src="https://static.wixstatic.com/media/c837a6_89c07cab18d94642a6cd6c165cc72655f000.jpg/v1/fill/w_3840,h_2880,al_c,q_90,enc_auto/c837a6_89c07cab18d94642a6cd6c165cc72655f000.jpg"
+                alt="Sequencer musicians"
+                loading="lazy"
+            >
+
+
+            <div class="footer-image-overlay"></div>
+
+
+            <div class="footer-content">
+
+                <h2 class="footer-title">
+
+                    EXPERIENCE
+                    <br>
+
+                    <span>THE SOUND.</span>
+
+                </h2>
+
+
+                <p class="footer-small">
+
+                    Explore music differently.
+                    Discover new sounds, create
+                    sequences and find your rhythm
+                    with Sequencer.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================= -->
+
+    <footer>
+
+        <div class="footer-inner">
+
+            <div class="copyright">
+
+                © 2026 Sequencer.
+                All rights reserved.
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="library.html">
+                    Library
+                </a>
+
+                <a href="sequence.html">
+                    Sequence
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================= -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const video =
+                    document.getElementById("heroVideo");
+
+                /*
+                 * Force the Wix video to start.
+                 * Because it is muted + playsinline,
+                 * browsers normally allow autoplay.
+                 */
+
+                if (video) {
+
+                    video.muted = true;
+
+                    const playVideo = () => {
+
+                        const promise =
+                            video.play();
+
+                        if (
+                            promise !== undefined
+                        ) {
+
+                            promise.catch(() => {
+
+                                /*
+                                 * Some browsers block
+                                 * autoplay temporarily.
+                                 *
+                                 * The video remains visible
+                                 * using its poster image.
+                                 */
+
+                            });
+
+                        }
+
+                    };
+
+
+                    playVideo();
+
+
+                    /*
+                     * Try again when the page becomes
+                     * visible.
+                     */
+
+                    document.addEventListener(
+                        "visibilitychange",
+                        function () {
+
+                            if (
+                                document.visibilityState
+                                === "visible"
+                            ) {
+
+                                playVideo();
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /*
+                 * Simple mobile menu behavior.
+                 */
+
+                const menuButton =
+                    document.getElementById(
+                        "menuButton"
+                    );
+
+                const nav =
+                    document.querySelector(
+                        ".nav-links"
+                    );
+
+
+                if (
+                    menuButton &&
+                    nav
+                ) {
+
+                    menuButton.addEventListener(
+                        "click",
+                        function () {
+
+                            const isOpen =
+                                nav.classList.contains(
+                                    "mobile-open"
+                                );
+
+
+                            if (!isOpen) {
+
+                                nav.classList.add(
+                                    "mobile-open"
+                                );
+
+                                nav.style.display =
+                                    "flex";
+
+                                nav.style.position =
+                                    "absolute";
+
+                                nav.style.top =
+                                    "72px";
+
+                                nav.style.left =
+                                    "16px";
+
+                                nav.style.right =
+                                    "16px";
+
+                                nav.style.padding =
+                                    "12px";
+
+                                nav.style.flexDirection =
+                                    "column";
+
+                                nav.style.alignItems =
+                                    "stretch";
+
+                                nav.style.background =
+                                    "rgba(10,5,10,.98)";
+
+                                nav.style.border =
+                                    "1px solid rgba(255,59,141,.2)";
+
+                                nav.style.borderRadius =
+                                    "12px";
+
+                            } else {
+
+                                nav.classList.remove(
+                                    "mobile-open"
+                                );
+
+                                nav.style.display =
+                                    "";
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>
