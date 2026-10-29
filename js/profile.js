@@ -1,13 +1,10 @@
 
-(function(){
+(async function(){
 'use strict';
 
 const SESSION_KEY='sequencer_current_user_v1';
-const USERS_KEY='sequencer_users_v1';
 
 function getSession(){try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}}
-function getUsers(){try{const u=JSON.parse(localStorage.getItem(USERS_KEY)||'[]');return Array.isArray(u)?u:[]}catch{return []}}
-function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u))}
 function normalizeEmail(v){return String(v||'').trim().toLowerCase()}
 function initials(user){return ((user.firstName||'')[0]||'').concat((user.lastName||'')[0]||'').toUpperCase()||'U'}
 function userKey(name,id){return `sequencer_${name}_${id}`}
@@ -25,25 +22,10 @@ function show(id,msg,type=''){
 }
 function escape(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-function randomSalt(){
-  if(window.crypto?.getRandomValues){const b=new Uint8Array(16);crypto.getRandomValues(b);return Array.from(b,x=>x.toString(16).padStart(2,'0')).join('')}
-  return Math.random().toString(36).slice(2)+Date.now().toString(36)
-}
-function bytesToHex(buffer){return Array.from(new Uint8Array(buffer),b=>b.toString(16).padStart(2,'0')).join('')}
-async function hashPassword(password,salt){
-  if(window.crypto?.subtle){
-    const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
-    const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:100000,hash:'SHA-256'},key,256);
-    return bytesToHex(bits);
-  }
-  return btoa(unescape(encodeURIComponent(salt+':'+password)));
-}
-
 const session=getSession();
 if(!session){window.location.href='auth.html';return}
-const users=getUsers();
-let user=users.find(u=>u.id===session.id);
-if(!user){localStorage.removeItem(SESSION_KEY);window.location.href='auth.html';return}
+if (!(await window.SequencerStore.ready)) return;
+let user=window.SequencerStore.session();
 
 function refreshSession(){
   localStorage.setItem(SESSION_KEY,JSON.stringify({id:user.id,firstName:user.firstName,lastName:user.lastName,email:user.email,signedInAt:session.signedInAt||new Date().toISOString()}))
@@ -94,17 +76,18 @@ function render(){
 }
 render();
 
-document.getElementById('detailsForm').addEventListener('submit',e=>{
+document.getElementById('detailsForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const firstName=document.getElementById('firstName').value.trim();
   const lastName=document.getElementById('lastName').value.trim();
   const email=normalizeEmail(document.getElementById('email').value);
   if(!firstName||!lastName)return show('detailsMessage','Please enter your first and last name.','error');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return show('detailsMessage','Please enter a valid email address.','error');
-  const duplicate=users.find(u=>u.id!==user.id&&normalizeEmail(u.email)===email);
-  if(duplicate)return show('detailsMessage','That email is already used by another account.','error');
-  user.firstName=firstName;user.lastName=lastName;user.email=email;
-  saveUsers(users);refreshSession();
+  try {
+    const result=await window.SequencerAPI.auth.updateProfile({firstName,lastName,email});
+    user=result.user;refreshSession();
+  } catch(err) { return show('detailsMessage',err.data?.message||err.message,'error'); }
+
   document.getElementById('profileAvatar').textContent=initials(user);
   document.getElementById('profileName').textContent=`${firstName} ${lastName}`;
   document.getElementById('profileEmail').textContent=email;
@@ -118,34 +101,52 @@ document.getElementById('passwordForm').addEventListener('submit',async e=>{
   const confirm=document.getElementById('confirmPassword').value;
   if(next.length<6)return show('passwordMessage','New password must be at least 6 characters.','error');
   if(next!==confirm)return show('passwordMessage','New passwords do not match.','error');
-  try{
-    const oldHash=await hashPassword(current,user.salt);
-    if(oldHash!==user.passwordHash)return show('passwordMessage','Current password is incorrect.','error');
-    user.salt=randomSalt();user.passwordHash=await hashPassword(next,user.salt);saveUsers(users);
+
+  try {
+    await window.SequencerAPI.auth.changePassword({currentPassword:current,newPassword:next});
     e.target.reset();show('passwordMessage','Password changed successfully.','success');
-  }catch(err){console.error(err);show('passwordMessage','Unable to change password. Please try again.','error')}
+  } catch(err) { show('passwordMessage',err.data?.message||err.message,'error'); }
+
 });
 
-document.getElementById('clearHistory').addEventListener('click',()=>{
+document.getElementById('clearHistory').addEventListener('click',async ()=>{
   if(!getUserData('history',[]).length)return;
   if(!confirm('Clear your complete song history?'))return;
+  if(window.SequencerAPI?.history?.clear){
+    try{ await window.SequencerAPI.history.clear(); }catch(e){return show('detailsMessage',e.message,'error')}
+  }
   setUserData('history',[]);render();
 });
 
 document.getElementById('logoutProfile').addEventListener('click',()=>{
+  if(window.SequencerAPI?.auth?.logout) window.SequencerAPI.auth.logout();
   localStorage.removeItem(SESSION_KEY);window.location.href='index.html';
 });
 
-document.getElementById('deleteAccount').addEventListener('click',()=>{
+document.getElementById('deleteAccount').addEventListener('click',async ()=>{
   const confirmation=prompt('This permanently deletes your Sequencer account and local music data. Type DELETE to continue.');
   if(confirmation!=='DELETE')return;
   const uid=user.id;
+  if(window.SequencerAPI?.auth?.deleteAccount){
+    try{ await window.SequencerAPI.auth.deleteAccount(); }catch(e){return show('detailsMessage',e.message,'error')}
+  }
   for(let i=localStorage.length-1;i>=0;i--){
     const key=localStorage.key(i);
     if(key && key.startsWith('sequencer_') && key.endsWith('_'+uid))localStorage.removeItem(key);
   }
-  saveUsers(users.filter(u=>u.id!==uid));
   localStorage.removeItem(SESSION_KEY);
   window.location.href='auth.html';
 });
+document.querySelectorAll('[data-connect-provider]').forEach(button=>button.addEventListener('click',async()=>{
+  button.disabled=true;
+  try {
+    if(!crypto.subtle)throw new Error('Open this page on localhost or HTTPS.');
+    const encode=bytes=>btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const verifier=encode(crypto.getRandomValues(new Uint8Array(32)));
+    const challenge=encode(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier))));
+    sessionStorage.setItem('sequencer_oauth_verifier',verifier);
+    const result=await window.SequencerAPI.auth.linkProvider(button.dataset.connectProvider,challenge);
+    location.href=result.url;
+  } catch(error){show('connectMessage',error.data?.message||error.message,'error');button.disabled=false;}
+}));
 })();
