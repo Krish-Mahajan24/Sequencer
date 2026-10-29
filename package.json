@@ -1,0 +1,21 @@
+{
+  "name": "sequencer-project",
+  "version": "1.0.0",
+  "description": "Sequencer - Mood-transition playlist ordering tool with MVC Backend & MongoDB Atlas",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "backend": "cd backend && npm run dev",
+    "install:all": "cd backend && npm install"
+  },
+  "keywords": [
+    "sequencer",
+    "mvc",
+    "mongodb",
+    "atlas",
+    "express",
+    "nodejs"
+  ],
+  "author": "Krish Mahajan",
+  "license": "ISC"
+}
