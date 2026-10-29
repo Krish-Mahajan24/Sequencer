@@ -1,0 +1,153 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "Sequencer Backend API",
+  "collectionId": "sequencer-mvc-atlas-api",
+  "dateExported": "2026-10-25T14:30:00.000Z",
+  "version": "1.2",
+  "folders": [
+    {
+      "_id": "folder_auth",
+      "name": "Auth",
+      "containerId": ""
+    },
+    {
+      "_id": "folder_tracks",
+      "name": "Tracks",
+      "containerId": ""
+    },
+    {
+      "_id": "folder_playlists",
+      "name": "Playlists",
+      "containerId": ""
+    },
+    {
+      "_id": "folder_sequences",
+      "name": "Sequences",
+      "containerId": ""
+    },
+    {
+      "_id": "folder_history",
+      "name": "History",
+      "containerId": ""
+    }
+  ],
+  "requests": [
+    {
+      "_id": "req_health",
+      "name": "Health Check",
+      "url": "http://localhost:5050/api/health",
+      "method": "GET",
+      "sortNum": 10000
+    },
+    {
+      "_id": "req_signup",
+      "name": "Signup User",
+      "url": "http://localhost:5050/api/auth/signup",
+      "method": "POST",
+      "containerId": "folder_auth",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"firstName\": \"Krish\",\n  \"lastName\": \"Mahajan\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+      },
+      "sortNum": 20000
+    },
+    {
+      "_id": "req_login",
+      "name": "Login User",
+      "url": "http://localhost:5050/api/auth/login",
+      "method": "POST",
+      "containerId": "folder_auth",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+      },
+      "sortNum": 21000
+    },
+    {
+      "_id": "req_me",
+      "name": "Get Current User Profile",
+      "url": "http://localhost:5050/api/auth/me",
+      "method": "GET",
+      "containerId": "folder_auth",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "sortNum": 22000
+    },
+    {
+      "_id": "req_get_tracks",
+      "name": "Get Tracks",
+      "url": "http://localhost:5050/api/tracks",
+      "method": "GET",
+      "containerId": "folder_tracks",
+      "sortNum": 30000
+    },
+    {
+      "_id": "req_create_track",
+      "name": "Create Track",
+      "url": "http://localhost:5050/api/tracks",
+      "method": "POST",
+      "containerId": "folder_tracks",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"trackId\": \"t_custom_1\",\n  \"title\": \"Neon Night\",\n  \"artist\": \"Cyber Grooves\",\n  \"bpm\": 124,\n  \"energy\": 8,\n  \"mood\": 7\n}"
+      },
+      "sortNum": 31000
+    },
+    {
+      "_id": "req_get_playlists",
+      "name": "Get Playlists",
+      "url": "http://localhost:5050/api/playlists",
+      "method": "GET",
+      "containerId": "folder_playlists",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "sortNum": 40000
+    },
+    {
+      "_id": "req_create_playlist",
+      "name": "Create Playlist",
+      "url": "http://localhost:5050/api/playlists",
+      "method": "POST",
+      "containerId": "folder_playlists",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Chill Flow\",\n  \"description\": \"My favorite evening transitions\",\n  \"trackIds\": [\"t1\", \"t2\"]\n}"
+      },
+      "sortNum": 41000
+    },
+    {
+      "_id": "req_get_history",
+      "name": "Get Playback History",
+      "url": "http://localhost:5050/api/history",
+      "method": "GET",
+      "containerId": "folder_history",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "sortNum": 50000
+    }
+  ]
+}
