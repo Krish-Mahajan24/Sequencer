@@ -1,0 +1,795 @@
+{
+  "info": {
+    "name": "Sequencer - Verified CRUD workflow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run the entire collection in order. Creates a fresh test account, exercises CRUD, and deletes only that temporary account last. Do not substitute your personal account token. Sequences and history do not have PUT routes."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5050/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "01 Health and MongoDB connection",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('MongoDB connected', () => pm.expect(result.database).to.eql('Connected'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Create temporary test account",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/signup",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Postman\",\n  \"lastName\": \"CRUD Test\",\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('testEmail', 'postman-crud-' + Date.now() + '-' + pm.variables.replaceIn('{{$randomUUID}}') + '@example.com');",
+              "pm.collectionVariables.set('testPassword', 'postman-test-password-123');",
+              "pm.collectionVariables.set('token', '');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.collectionVariables.set('token', result.token);",
+              "pm.collectionVariables.set('userId', result.user.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.collectionVariables.set('token', result.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Read current account",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/auth/me"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Same account', () => pm.expect(result.user.id).to.eql(pm.collectionVariables.get('userId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Update profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/profile",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Updated Postman\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Name updated', () => pm.expect(result.user.firstName).to.eql('Updated Postman'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Change password",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/password",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"{{testPassword}}\",\n  \"newPassword\": \"postman-new-password-123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Verify new password login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"postman-new-password-123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.collectionVariables.set('token', result.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Create track",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/tracks",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"postman-crud-track\",\n  \"title\": \"Postman Test Song\",\n  \"artist\": \"Test Artist\",\n  \"bpm\": 100\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Read tracks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/tracks"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Track exists', () => pm.expect(result.data.some(t => t.id === 'postman-crud-track')).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Update track",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/tracks/postman-crud-track",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bpm\": 125\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('BPM updated', () => pm.expect(result.data.bpm).to.eql(125));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Toggle track like",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/tracks/postman-crud-track/like",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Track liked', () => pm.expect(result.liked).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Create playlist",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/playlists",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Test Playlist\",\n  \"trackIds\": [\n    \"postman-crud-track\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.collectionVariables.set('playlistId', result.data._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Update playlist",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/playlists/{{playlistId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Postman Playlist\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Playlist updated', () => pm.expect(result.data.name).to.eql('Updated Postman Playlist'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Read playlists",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/playlists"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Update persisted', () => pm.expect(result.data.some(p => p.name === 'Updated Postman Playlist')).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 Create sequence",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/sequences",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Test Sequence\",\n  \"tracks\": [\n    {\n      \"id\": \"postman-crud-track\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.collectionVariables.set('sequenceId', result.data._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 Read sequences",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/sequences"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Sequence exists', () => pm.expect(result.data.length).to.eql(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 Add listening history",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/history",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"trackId\": \"postman-crud-track\",\n  \"title\": \"Postman Test Song\",\n  \"artist\": \"Test Artist\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Read listening history",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('History exists', () => pm.expect(result.data.length).to.eql(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 Delete track",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/tracks/postman-crud-track"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 Verify track deleted",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/tracks"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Tracks empty', () => pm.expect(result.data).to.eql([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "21 Delete playlist",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/playlists/{{playlistId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "22 Verify playlist deleted",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/playlists"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Playlists empty', () => pm.expect(result.data).to.eql([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "23 Delete sequence",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/sequences/{{sequenceId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "24 Verify sequence deleted",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/sequences"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('Sequences empty', () => pm.expect(result.data).to.eql([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "25 Clear history",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "26 Verify history cleared",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));",
+              "pm.test('History empty', () => pm.expect(result.data).to.eql([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "27 Delete temporary account LAST",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/auth/account"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const result = pm.response.json();",
+              "pm.test('Request succeeded', () => pm.expect(result.success === false).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

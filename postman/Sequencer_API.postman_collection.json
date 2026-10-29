@@ -1,0 +1,463 @@
+{
+  "info": {
+    "_postman_id": "9b12a81f-4cb1-4f9e-a10c-992e59b91702",
+    "name": "Sequencer REST API (Continuous Evaluation 2)",
+    "description": "Complete Postman & Thunder Client collection for testing Sequencer MVC Backend with MongoDB Atlas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5050/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Checks backend uptime, database connection status, and service health."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Signup New User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "    pm.collectionVariables.set('token', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Krish\",\n  \"lastName\": \"Mahajan\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "2. Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "    pm.collectionVariables.set('token', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "3. Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "4. Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Krish\",\n  \"lastName\": \"Mahajan Updated\",\n  \"email\": \"testuser@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "5. Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "password"]
+            }
+          }
+        },
+        {
+          "name": "6. Delete User Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/account",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "account"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tracks",
+      "item": [
+        {
+          "name": "1. Get Tracks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tracks",
+              "host": ["{{baseUrl}}"],
+              "path": ["tracks"]
+            }
+          }
+        },
+        {
+          "name": "2. Create Track",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trackId\": \"t_demo_1\",\n  \"title\": \"Midnight Horizon\",\n  \"artist\": \"Solar Waves\",\n  \"bpm\": 115,\n  \"energy\": 7,\n  \"mood\": 6,\n  \"genre\": \"Synthwave\",\n  \"artwork\": \"\",\n  \"previewUrl\": \"\",\n  \"liked\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tracks",
+              "host": ["{{baseUrl}}"],
+              "path": ["tracks"]
+            }
+          }
+        },
+        {
+          "name": "3. Toggle Like on Track",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tracks/t_demo_1/like",
+              "host": ["{{baseUrl}}"],
+              "path": ["tracks", "t_demo_1", "like"]
+            }
+          }
+        },
+        {
+          "name": "4. Update Track",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bpm\": 120,\n  \"energy\": 8,\n  \"mood\": 7\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tracks/t_demo_1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tracks", "t_demo_1"]
+            }
+          }
+        },
+        {
+          "name": "5. Delete Track",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tracks/t_demo_1",
+              "host": ["{{baseUrl}}"],
+              "path": ["tracks", "t_demo_1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Playlists",
+      "item": [
+        {
+          "name": "1. Get Playlists",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/playlists",
+              "host": ["{{baseUrl}}"],
+              "path": ["playlists"]
+            }
+          }
+        },
+        {
+          "name": "2. Create Playlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Night Vibes\",\n  \"description\": \"Chill electronic tracks for evening sequencing\",\n  \"trackIds\": [\"t1\", \"t2\", \"t3\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/playlists",
+              "host": ["{{baseUrl}}"],
+              "path": ["playlists"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sequences",
+      "item": [
+        {
+          "name": "1. Get Sequences",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sequences",
+              "host": ["{{baseUrl}}"],
+              "path": ["sequences"]
+            }
+          }
+        },
+        {
+          "name": "2. Create Sequence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smooth Rise Sequence\",\n  \"tracks\": [\n    { \"id\": \"t1\", \"title\": \"Low Tide\", \"bpm\": 68 },\n    { \"id\": \"t2\", \"title\": \"Slow Static\", \"bpm\": 78 },\n    { \"id\": \"t3\", \"title\": \"Half Light\", \"bpm\": 96 }\n  ],\n  \"flowStats\": {\n    \"smoothness\": 92,\n    \"tempoJumpMax\": 18\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sequences",
+              "host": ["{{baseUrl}}"],
+              "path": ["sequences"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "History",
+      "item": [
+        {
+          "name": "1. Get Play History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["history"]
+            }
+          }
+        },
+        {
+          "name": "2. Add Track to History",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trackId\": \"t1\",\n  \"title\": \"Low Tide\",\n  \"artist\": \"Nightbound\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["history"]
+            }
+          }
+        },
+        {
+          "name": "3. Clear History",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["history"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
