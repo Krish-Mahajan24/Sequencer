@@ -16,7 +16,8 @@
 //   - Old track metadata repair remains supported.
 // ================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!(await window.SequencerStore.ready)) return;
 
   // ================================================================
   // BASIC HELPERS

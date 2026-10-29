@@ -404,6 +404,10 @@
     'click',
     function () {
 
+      if (window.SequencerAPI?.auth?.logout) {
+        window.SequencerAPI.auth.logout();
+      }
+
       localStorage.removeItem(
         SESSION_KEY
       );

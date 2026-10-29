@@ -13,7 +13,8 @@
 // - Nearest-neighbour + 2-opt sequencing
 // ============================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!(await window.SequencerStore.ready)) return;
 
   // ==========================================================================
   // STORAGE
@@ -164,21 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
 
-      const raw =
-        localStorage.getItem(STORAGE_KEY);
-
-      if (raw === null) {
-        return SEED_TRACKS.map(track => ({
-          ...track
-        }));
-      }
-
-      const parsed =
-        JSON.parse(raw);
-
-      return Array.isArray(parsed)
-        ? parsed
-        : [];
+      const saved = window.SequencerStore.get('library', null);
+      return saved === null ? SEED_TRACKS.map(track => ({ ...track })) : saved;
 
     } catch {
 
@@ -204,10 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
 
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(tracks)
-      );
+      window.SequencerStore.set('library', tracks);
 
     } catch {
 
