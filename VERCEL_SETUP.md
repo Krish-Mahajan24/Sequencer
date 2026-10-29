@@ -33,13 +33,13 @@ Add this authorized redirect URI to its Google Cloud OAuth web client:
 
 `https://sequencer-sable.vercel.app/api/auth/google/callback`
 
-Set the GitHub OAuth app's homepage URL to the production origin and its
-authorization callback URL to:
+Set the GitHub OAuth app's homepage URL to the production origin and add this
+redirect URI:
 
 `https://sequencer-sable.vercel.app/api/auth/github/callback`
 
-GitHub OAuth apps have one callback setting; use a separate app for local
-development if necessary. Changing Vercel variables requires a new deployment.
+Keep the existing localhost redirect URI. Leave wildcard matching disabled.
+Changing Vercel variables requires a new deployment.
 
 ## Verification
 

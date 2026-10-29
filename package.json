@@ -5,12 +5,14 @@
   "engines": { "node": "22.x" },
   "description": "Sequencer - Mood-transition playlist ordering tool with MVC Backend & MongoDB Atlas",
   "scripts": {
+    "postinstall": "npm ci --prefix backend",
     "build": "node scripts/build-vercel.cjs",
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
     "backend": "cd backend && npm run dev",
     "install:all": "cd backend && npm install"
   },
+  "dependencies": { "express": "^4.21.0" },
   "keywords": [
     "sequencer",
     "mvc",
