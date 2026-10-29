@@ -41,9 +41,10 @@ if (process.env.NODE_ENV !== 'test') {
 // Serve static frontend files if accessed via backend
 const frontendPath = path.resolve(__dirname, '..', 'frontend');
 app.use('/frontend', express.static(frontendPath));
+app.use(express.static(frontendPath));
 
 // MVC View - API Documentation & Dashboard
-app.get('/', (req, res) => {
+app.get('/api-docs', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
