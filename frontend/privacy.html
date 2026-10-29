@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Privacy — Sequencer</title>
+<style>body{margin:0;background:#100b10;color:#f4edf1;font:17px/1.7 system-ui,sans-serif}main{max-width:760px;margin:auto;padding:48px 24px}a{color:#ff82b2}h1,h2{line-height:1.25}h2{margin-top:32px}small{color:#b8a9b1}</style></head>
+<body><main><a href="index.html">← Sequencer</a><h1>Sequencer privacy policy</h1><small>Updated 29 October 2026</small>
+<p>Sequencer is a playlist ordering application. This page explains the data used by this deployment and the controls available in the app.</p>
+<h2>Account and provider information</h2>
+<p>When you create an account, Sequencer stores your name, email address and a password hash. Passwords used for Google or GitHub sign-in are handled by those providers and are not received by Sequencer.</p>
+<p>Google sign-in requests your basic profile and email address. GitHub sign-in requests your profile and verified email addresses. Sequencer uses the provider account identifier, name and verified email to sign you in or connect you to an existing account with that email. The server uses provider access tokens during this exchange; it does not store those provider tokens in the account record.</p>
+<h2>Music and browser storage</h2>
+<p>Your saved tracks, tags, likes, playlists, sequences and playback history are associated with your account in MongoDB Atlas. They are used to provide your library and playlist ordering features. Your browser also stores a Sequencer session token, account details, cached collections and pending changes in local storage. Signing out clears the active session; account data cached on a shared device may remain in browser storage.</p>
+<p>Social sign-in uses a temporary, secure HTTP-only cookie and browser session storage to validate the sign-in flow. One-use exchange records expire after one minute and are removed by the database's expiry mechanism.</p>
+<h2>Hosting and external requests</h2>
+<p>Vercel hosts the site and API; MongoDB Atlas stores account and music records. These services process requests and may retain operational logs. Google and GitHub process social sign-in. Song and artist searches may contact Apple's iTunes services or Wikipedia and send the search terms you enter. Fonts and artwork may load from external providers, which receive ordinary web request information.</p>
+<h2>Your controls</h2>
+<p>You can update profile details and your password, manage your music collections, clear playback history, or delete your account from the profile page. Account deletion removes the account and its associated tracks, playlists, sequences and history from the application's database. Local browser storage can also be cleared using your browser settings. Hosting logs and provider-side records are governed by those services' retention controls.</p>
+<p>For questions or data requests, contact the project maintainers through the <a href="https://github.com/Krish-Mahajan24/Sequencer">Sequencer repository</a> or the support contact shown on the Google consent screen. Avoid putting passwords, tokens or private account information in public issues.</p>
+</main></body></html>
