@@ -13,3 +13,7 @@ backend/.env
 # Logs
 *.log
 npm-debug.log*
+
+# Generated deployment output and local Vercel metadata
+public/
+.vercel/

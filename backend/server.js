@@ -18,9 +18,10 @@ const sequenceRoutes = require('./routes/sequenceRoutes');
 const historyRoutes = require('./routes/historyRoutes');
 
 // Initialize MongoDB Atlas connection
-connectDB();
+if (!process.env.VERCEL) connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Middlewares
 app.use(
@@ -47,7 +48,8 @@ app.get('/', (req, res) => {
 });
 
 // Health check endpoint (for deployment monitoring e.g. Render/Railway)
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  await connectDB.waitUntilConnected();
   const mongoose = require('mongoose');
   const dbState = mongoose.connection.readyState;
   const states = ['Disconnected', 'Connected', 'Connecting', 'Disconnecting'];
@@ -85,7 +87,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5050;
 
-const server = app.listen(PORT, () => {
+if (require.main === module) app.listen(PORT, () => {
   console.log(`🚀 Sequencer Backend running on port ${PORT}`);
   console.log(`📊 API View Dashboard: http://localhost:${PORT}`);
   console.log(`🎵 Frontend Web App:   http://localhost:${PORT}/frontend/index.html`);
