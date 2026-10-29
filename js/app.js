@@ -29,16 +29,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Hero player card — click a row to toggle its "playing" state (one at a time)
-  const playerRows = document.querySelectorAll('.player-row');
+  // The homepage's fictional tracks have local, original audio demos.
+  const playerRows = [...document.querySelectorAll('.player-row')];
   if (playerRows.length) {
-    playerRows.forEach((row) => {
-      row.addEventListener('click', () => {
-        const wasPlaying = row.classList.contains('playing');
-        playerRows.forEach((r) => r.classList.remove('playing'));
-        if (!wasPlaying) row.classList.add('playing');
-      });
+    const audio = new Audio();
+    audio.id = 'homeDemoAudio';
+    document.body.appendChild(audio);
+    let active = null;
+    let request = 0;
+    const reset = () => playerRows.forEach(row => {
+      row.classList.remove('playing');
+      row.querySelector('button').setAttribute('aria-pressed', 'false');
     });
+    for (const row of playerRows) {
+      row.querySelector('button').setAttribute('aria-pressed', 'false');
+      row.addEventListener('click', async () => {
+        const current = ++request;
+        if (active === row && !audio.paused) { audio.pause(); active = null; reset(); window.SequencerMedia.status('Demo paused.'); return; }
+        audio.pause(); reset(); active = null;
+        const title = row.querySelector('.player-title').textContent;
+        const artist = row.querySelector('.player-artist').textContent.split('·')[0].trim();
+        window.SequencerMedia.prime(audio);
+        try {
+          await window.SequencerMedia.play(audio, window.SequencerMedia.demoUrl({ title, artist }));
+          if (current !== request) return;
+          active = row; row.classList.add('playing');
+          row.querySelector('button').setAttribute('aria-pressed', 'true');
+          window.SequencerMedia.status('Playing original generated demo: ' + title);
+        } catch (error) { if (current === request) { reset(); window.SequencerMedia.status(window.SequencerMedia.errorMessage(error)); } }
+      });
+    }
+    audio.addEventListener('ended', () => { active = null; reset(); window.SequencerMedia.status('Demo finished.'); });
+    window.addEventListener('pagehide', () => audio.pause());
   }
 
   // Back-to-top button

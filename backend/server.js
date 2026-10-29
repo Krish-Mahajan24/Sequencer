@@ -67,6 +67,8 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Fail quickly instead of buffering requests while MongoDB is unavailable.
+// Public catalog lookups do not require a database connection or a login.
+app.use('/api/catalog', require('./routes/catalogRoutes'));
 app.use('/api', async (req, res, next) => {
   if (!(await connectDB.waitUntilConnected())) {
     res.set('Retry-After', '3');

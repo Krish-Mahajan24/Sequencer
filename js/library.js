@@ -483,22 +483,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
 
-        const url =
-          `https://itunes.apple.com/search` +
-          `?term=${encodeURIComponent(searchTerm)}` +
-          `&media=music` +
-          `&entity=song` +
-          `&limit=10`;
-
-        const response =
-          await fetch(url);
-
-        if (!response.ok) {
-          return null;
-        }
-
-        const data =
-          await response.json();
+        const data = await window.SequencerMedia.search(searchTerm, 10);
 
         const results =
           data?.results || [];
@@ -594,11 +579,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
         }
 
-        if (!match) {
-          match =
-            results[0];
-        }
-
         return match || null;
 
       } catch (error) {
@@ -626,7 +606,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const tracksToRepair =
         library.filter(
           track =>
-            track.title &&
+            track.title && !window.SequencerMedia.demoUrl(track) &&
             (
               !track.artwork ||
               !track.previewUrl
@@ -2879,120 +2859,52 @@ document.addEventListener('DOMContentLoaded', async () => {
   // PLAY TRACK
   // ================================================================
 
-  const playTrack =
-    async (id) => {
-
-      if (!audio) {
-        return;
+  let playbackRequest = 0;
+  const playTrack = async (id) => {
+    if (!audio) return;
+    const track = findTrack(id);
+    if (!track) return;
+    const current = ++playbackRequest;
+    if (playingId === String(id) && !audio.paused) {
+      audio.pause(); playingId = null; setPlayingUI(null);
+      window.SequencerMedia.status('Playback paused.'); return;
+    }
+    audio.pause(); playingId = null; setPlayingUI(null);
+    window.SequencerMedia.prime(audio);
+    window.SequencerMedia.status('Loading preview…');
+    const demo = window.SequencerMedia.demoUrl(track);
+    try {
+      let url = demo || track.previewUrl;
+      if (!url) {
+        const result = await findTrackOnITunes(track);
+        url = result?.previewUrl;
+        if (url) { track.previewUrl = url; save('library', library); }
       }
-
-      const track =
-        findTrack(id);
-
-      if (!track) {
-        return;
+      if (current !== playbackRequest) return;
+      if (!url) throw new Error('No preview is available for this song.');
+      try { await window.SequencerMedia.play(audio, url); }
+      catch (error) {
+        if (current !== playbackRequest) return;
+        if (demo || error.name === 'NotAllowedError') throw error;
+        const result = await findTrackOnITunes(track);
+        if (current !== playbackRequest) return;
+        if (!result?.previewUrl || result.previewUrl === url) throw error;
+        track.previewUrl = result.previewUrl; save('library', library);
+        await window.SequencerMedia.play(audio, track.previewUrl);
       }
-
-      if (
-        playingId ===
-          String(id) &&
-        !audio.paused
-      ) {
-
-        audio.pause();
-
-        playingId =
-          null;
-
-        setPlayingUI(
-          null
-        );
-
-        return;
-      }
-
-      if (!track.previewUrl) {
-
-        const result =
-          await findTrackOnITunes(
-            track
-          );
-
-        if (
-          result?.previewUrl
-        ) {
-
-          track.previewUrl =
-            result.previewUrl;
-
-          if (
-            !track.artwork &&
-            result.artworkUrl100
-          ) {
-
-            track.artwork =
-              result.artworkUrl100
-                .replace(
-                  '100x100',
-                  '600x600'
-                );
-          }
-
-          save(
-            'library',
-            library
-          );
-
-          renderAll();
-        }
-      }
-
-      if (!track.previewUrl) {
-
-        alert(
-          `No preview is available for "${track.title}".`
-        );
-
-        return;
-      }
-
-      try {
-
-        audio.pause();
-
-        audio.src =
-          track.previewUrl;
-
-        audio.load();
-
-        await audio.play();
-
-        recordPlayHistory(track);
-
-        playingId =
-          String(id);
-
-        setPlayingUI(
-          String(id)
-        );
-
-      } catch (error) {
-
-        console.warn(
-          'Audio playback failed:',
-          error
-        );
-
-        playingId =
-          null;
-
-        setPlayingUI(
-          null
-        );
-      }
-    };
+      if (current !== playbackRequest) return;
+      recordPlayHistory(track); playingId = String(id); setPlayingUI(playingId);
+      window.SequencerMedia.status((demo ? 'Playing generated demo: ' : 'Playing song preview: ') + track.title);
+    } catch (error) {
+      if (current !== playbackRequest) return;
+      playingId = null; setPlayingUI(null);
+      window.SequencerMedia.status(error.message.startsWith('No preview') ? error.message : window.SequencerMedia.errorMessage(error));
+    }
+  };
 
   if (audio) {
+    window.addEventListener('pagehide', () => audio.pause());
+    audio.addEventListener('error', () => { playingId = null; setPlayingUI(null); });
 
     audio.addEventListener(
       'ended',
